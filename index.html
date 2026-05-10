@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="{{t.meta.lang}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c1a22" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f1e7" media="(prefers-color-scheme: light)">
+<meta name="color-scheme" content="light dark">
+<title>{{t.meta.title}}</title>
+<meta name="description" content="{{t.meta.description}}">
+<meta name="author" content="{{t.meta.author}}">
+<meta name="robots" content="index, follow">
+<meta name="format-detection" content="telephone=no">
+
+<meta property="og:type"        content="website">
+<meta property="og:locale"      content="{{t.meta.locale}}">
+<meta property="og:title"       content="{{t.meta.og_title}}">
+<meta property="og:description" content="{{t.meta.og_description}}">
+<meta property="og:image"       content="images/img_4886-1280.webp">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="1707">
+<meta name="twitter:card"       content="summary_large_image">
+
+{{HREFLANG}}
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20x='10'%20y='20'%20width='44'%20height='12'%20fill='%230057B7'/%3E%3Crect%20x='10'%20y='32'%20width='44'%20height='12'%20fill='%23FFD700'/%3E%3Cline%20x1='10'%20y1='16'%20x2='10'%20y2='48'%20stroke='%230c1a22'%20stroke-width='2.2'%20stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="canonical" href="./">
+
+<!--
+  Preload only LCP-critical font subsets.
+    inter-cyrillic           — body text, hero subtitle, nav (UK primary)
+    playfair-italic-cyr      — hero <h1> (italic display serif)
+  Cyrillic subsets also cover Latin for short phrases; EN speakers
+  get Latin via the same unicode-range fallback without extra bytes.
+-->
+<link rel="preload" as="font" type="font/woff2" href="fonts/inter-cyrillic.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/playfair-italic-cyr.woff2" crossorigin>
+
+<link rel="preload" as="image" type="image/avif" href="images/img_4886-1920.avif"
+      imagesrcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w"
+      imagesizes="100vw" fetchpriority="high">
+
+<link rel="stylesheet" href="styles.css">
+
+<script type="application/ld+json">
+{{JSONLD}}
+</script>
+</head>
+
+<body>
+
+<a class="skip-link" href="#main">{{t.skip.link}}</a>
+
+<div class="progress" aria-hidden="true"><span class="progress__bar"></span></div>
+
+<header class="nav" id="nav" data-theme="inverse">
+  <div class="nav__wrap">
+    <a class="brand" href="#top" aria-label="{{t.nav.aria_home}}">
+      <span class="brand__mark" aria-hidden="true">
+        <svg class="flag" viewBox="0 0 40 28" role="img" aria-label="{{t.hero.title}}">
+          <defs>
+            <clipPath id="flag-clip" clipPathUnits="userSpaceOnUse">
+              <rect x="2" y="3" width="36" height="22"/>
+            </clipPath>
+          </defs>
+          <g class="flag__fabric" clip-path="url(#flag-clip)">
+            <g class="flag__strip"><rect x="1.8"  y="3" width="6.4" height="11" fill="#005BBB"/><rect x="1.8"  y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="7.8"  y="3" width="6.4" height="11" fill="#005BBB"/><rect x="7.8"  y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="13.8" y="3" width="6.4" height="11" fill="#005BBB"/><rect x="13.8" y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="19.8" y="3" width="6.4" height="11" fill="#005BBB"/><rect x="19.8" y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="25.8" y="3" width="6.4" height="11" fill="#005BBB"/><rect x="25.8" y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="31.8" y="3" width="6.4" height="11" fill="#005BBB"/><rect x="31.8" y="14" width="6.4" height="11" fill="#FFD500"/></g>
+          </g>
+          <line class="flag__pole" x1="2" y1="2" x2="2" y2="27" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="brand__name">{{t.hero.title}}</span>
+    </a>
+    <button class="nav__toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="{{t.nav.toggle_open}}">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav__menu" id="nav-menu" aria-label="{{t.nav.aria_menu}}">
+      <a href="#about">{{t.nav.about}}</a>
+      <a href="#nature">{{t.nav.nature}}</a>
+      <a href="#history">{{t.nav.history}}</a>
+      <a href="#culture">{{t.nav.culture}}</a>
+      <a href="#life">{{t.nav.life}}</a>
+      <a href="#gallery">{{t.nav.gallery}}</a>
+      <a href="#events">{{t.nav.events}}</a>
+      <a href="#contact">{{t.nav.contact}}</a>
+    </nav>
+  </div>
+</header>
+
+{{LANG_SWITCH}}
+
+<main id="main">
+
+<section class="hero" id="top">
+  <picture class="hero__media">
+    <source type="image/avif" srcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w" sizes="100vw">
+    <source type="image/webp" srcset="images/img_4886-640.webp 640w, images/img_4886-1280.webp 1280w, images/img_4886-1920.webp 1920w" sizes="100vw">
+    <img src="images/img_4886-1280.webp" alt="{{t.hero.img_alt}}" width="1280" height="1707" fetchpriority="high" decoding="async">
+  </picture>
+
+  <picture class="hero__water" aria-hidden="true">
+    <source type="image/avif" srcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w" sizes="100vw">
+    <source type="image/webp" srcset="images/img_4886-640.webp 640w, images/img_4886-1280.webp 1280w, images/img_4886-1920.webp 1920w" sizes="100vw">
+    <img src="images/img_4886-1280.webp" alt="" width="1280" height="1707" decoding="async">
+  </picture>
+
+  <svg class="hero__filters" aria-hidden="true" focusable="false"
+       width="0" height="0" style="position:absolute">
+    <defs>
+      <filter id="water-ripple" x="-2%" y="-2%" width="104%" height="104%"
+              color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.008 0.022"
+                      numOctaves="2" seed="7" result="n">
+          <animate attributeName="baseFrequency"
+                   dur="26s" repeatCount="indefinite"
+                   values="0.008 0.022;
+                           0.010 0.028;
+                           0.007 0.020;
+                           0.008 0.022"/>
+        </feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="1.2"
+                           xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="hero__atmos" aria-hidden="true"></div>
+  <div class="hero__grain" aria-hidden="true"></div>
+
+  <div class="hero__top">
+    <span>{{t.hero.top_left}}</span>
+    <span>{{t.hero.top_right}}</span>
+  </div>
+
+  <div class="hero__body">
+    <p class="eyebrow">{{t.hero.eyebrow}}</p>
+    <h1 class="hero__title"><span class="hero__title-word">{{t.hero.title}}</span></h1>
+    <p class="hero__sub">{{t.hero.sub}}</p>
+  </div>
+
+  <dl class="hero__foot">
+    <div><dt>{{t.hero.stats.founded_k}}</dt><dd>{{t.hero.stats.founded_v}}</dd></div>
+    <div><dt>{{t.hero.stats.residents_k}}</dt><dd>{{t.hero.stats.residents_v}}</dd></div>
+    <div><dt>{{t.hero.stats.elev_k}}</dt><dd>{{t.hero.stats.elev_v}}</dd></div>
+    <div><dt>{{t.hero.stats.comm_k}}</dt><dd>{{t.hero.stats.comm_v}}</dd></div>
+  </dl>
+
+  <a class="hero__cue" href="#about" aria-label="{{t.hero.aria_cue}}">
+    <span>{{t.hero.cue}}</span>
+    <span class="hero__cue-line"></span>
+  </a>
+</section>
+
+<section id="about" class="chapter chapter--about">
+  <header class="chapter__head">
+    <p class="chapter__num">{{t.about.chapter}}</p>
+    <h2 class="chapter__title">
+      {{t.about.title_l1}}<br>
+      <em>{{t.about.title_l2}}</em>
+    </h2>
+  </header>
+
+  <div class="essay">
+    <p class="essay__lede">{{t.about.lede}}</p>
+    <p>{{t.about.p1}}</p>
+    <p>{{t.about.p2}}</p>
+  </div>
+</section>
+
+<section id="nature" class="chapter chapter--nature">
+  <figure class="plate plate--wide">
+    <picture>
+      <source type="image/avif" srcset="images/img_9210-640.avif 640w, images/img_9210-1280.avif 1280w, images/img_9210-1920.avif 1920w" sizes="(min-width: 900px) 80vw, 100vw">
+      <source type="image/webp" srcset="images/img_9210-640.webp 640w, images/img_9210-1280.webp 1280w, images/img_9210-1920.webp 1920w" sizes="(min-width: 900px) 80vw, 100vw">
+      <img loading="lazy" decoding="async" src="images/img_9210-1280.webp" alt="{{t.nature.img_main_alt}}" width="1280" height="1707">
+    </picture>
+    <figcaption>{{t.nature.cap_main}}</figcaption>
+  </figure>
+
+  <header class="chapter__head chapter__head--inline">
+    <p class="chapter__num">{{t.nature.chapter}}</p>
+    <h2 class="chapter__title">
+      {{t.nature.title_l1}}<br>
+      <em>{{t.nature.title_l2}}</em>
+    </h2>
+  </header>
+
+  <div class="duo">
+    <figure class="plate">
+      <picture>
+        <source type="image/avif" srcset="images/img_5050-640.avif 640w, images/img_5050-1280.avif 1280w" sizes="(min-width: 900px) 48vw, 100vw">
+        <source type="image/webp" srcset="images/img_5050-640.webp 640w, images/img_5050-1280.webp 1280w" sizes="(min-width: 900px) 48vw, 100vw">
+        <img loading="lazy" decoding="async" src="images/img_5050-1280.webp" alt="{{t.nature.img_l_alt}}" width="1280" height="960">
+      </picture>
+      <figcaption>{{t.nature.cap_l}}</figcaption>
+    </figure>
+    <figure class="plate">
+      <picture>
+        <source type="image/avif" srcset="images/img_5052-640.avif 640w, images/img_5052-1280.avif 1280w" sizes="(min-width: 900px) 48vw, 100vw">
+        <source type="image/webp" srcset="images/img_5052-640.webp 640w, images/img_5052-1280.webp 1280w" sizes="(min-width: 900px) 48vw, 100vw">
+        <img loading="lazy" decoding="async" src="images/img_5052-1280.webp" alt="{{t.nature.img_r_alt}}" width="1280" height="960">
+      </picture>
+      <figcaption>{{t.nature.cap_r}}</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="history" class="chapter chapter--history">
+  <header class="chapter__head chapter__head--center">
+    <p class="chapter__num">{{t.history.chapter}}</p>
+    <h2 class="chapter__title">
+      {{t.history.title_l1}}<br>
+      <em>{{t.history.title_l2}}</em>
+    </h2>
+  </header>
+
+  <ol class="timeline" aria-label="{{t.history.aria}}">
+    <li>
+      <span class="timeline__year">{{t.history.y1}}</span>
+      <div class="timeline__body"><h3>{{t.history.h1}}</h3><p>{{t.history.p1}}</p></div>
+    </li>
+    <li>
+      <span class="timeline__year">{{t.history.y2}}</span>
+      <div class="timeline__body"><h3>{{t.history.h2}}</h3><p>{{t.history.p2}}</p></div>
+    </li>
+    <li>
+      <span class="timeline__year">{{t.history.y3}}</span>
+      <div class="timeline__body"><h3>{{t.history.h3}}</h3><p>{{t.history.p3}}</p></div>
+    </li>
+    <li>
+      <span class="timeline__year">{{t.history.y4}}</span>
+      <div class="timeline__body"><h3>{{t.history.h4}}</h3><p>{{t.history.p4}}</p></div>
+    </li>
+    <li>
+      <span class="timeline__year">{{t.history.y5}}</span>
+      <div class="timeline__body"><h3>{{t.history.h5}}</h3><p>{{t.history.p5}}</p></div>
+    </li>
+  </ol>
+</section>
+
+<section id="culture" class="chapter chapter--culture">
+  <figure class="plate plate--half">
+    <picture>
+      <source type="image/avif" srcset="images/img_4691-640.avif 640w, images/img_4691-1280.avif 1280w, images/img_4691-1920.avif 1920w" sizes="(min-width: 900px) 55vw, 100vw">
+      <source type="image/webp" srcset="images/img_4691-640.webp 640w, images/img_4691-1280.webp 1280w, images/img_4691-1920.webp 1920w" sizes="(min-width: 900px) 55vw, 100vw">
+      <img loading="lazy" decoding="async" src="images/img_4691-1280.webp" alt="{{t.culture.img_alt}}" width="1280" height="1707">
+    </picture>
+    <figcaption>{{t.culture.cap}}</figcaption>
+  </figure>
+
+  <div class="culture__text">
+    <header class="chapter__head chapter__head--right">
+      <p class="chapter__num">{{t.culture.chapter}}</p>
+      <h2 class="chapter__title">
+        {{t.culture.title_l1}}<br>
+        <em>{{t.culture.title_l2}}</em>
+      </h2>
+    </header>
+    <p class="essay__lede">{{t.culture.lede}}</p>
+    <p class="pullquote">{{t.culture.quote}}</p>
+  </div>
+</section>
+
+<section id="life" class="chapter chapter--life">
+  <header class="chapter__head chapter__head--center">
+    <p class="chapter__num">{{t.life.chapter}}</p>
+    <h2 class="chapter__title">
+      {{t.life.title_l1}}<br>
+      <em>{{t.life.title_l2}}</em>
+    </h2>
+  </header>
+
+  <ul class="infra" role="list">
+    <li class="infra__item">
+      <p class="infra__num">01</p>
+      <h3>{{t.life.i1_h}}</h3>
+      <p>{{t.life.i1_p}}</p>
+      <address>{{t.life.i1_a}}</address>
+    </li>
+    <li class="infra__item">
+      <p class="infra__num">02</p>
+      <h3>{{t.life.i2_h}}</h3>
+      <p>{{t.life.i2_p}}</p>
+    </li>
+    <li class="infra__item">
+      <p class="infra__num">03</p>
+      <h3>{{t.life.i3_h}}</h3>
+      <p>{{t.life.i3_p}}</p>
+      <address>{{t.life.i3_a}}</address>
+    </li>
+    <li class="infra__item">
+      <p class="infra__num">04</p>
+      <h3>{{t.life.i4_h}}</h3>
+      <p>{{t.life.i4_p}}</p>
+    </li>
+    <li class="infra__item">
+      <p class="infra__num">05</p>
+      <h3>{{t.life.i5_h}}</h3>
+      <p>{{t.life.i5_p}}</p>
+      <address>{{t.life.i5_a}}</address>
+    </li>
+    <li class="infra__item">
+      <p class="infra__num">06</p>
+      <h3>{{t.life.i6_h}}</h3>
+      <p>{{t.life.i6_p}}</p>
+    </li>
+  </ul>
+
+  <figure class="plate plate--full">
+    <picture>
+      <source type="image/avif" srcset="images/img_9257-640.avif 640w, images/img_9257-1280.avif 1280w, images/img_9257-1920.avif 1920w" sizes="100vw">
+      <source type="image/webp" srcset="images/img_9257-640.webp 640w, images/img_9257-1280.webp 1280w, images/img_9257-1920.webp 1920w" sizes="100vw">
+      <img loading="lazy" decoding="async" src="images/img_9257-1280.webp" alt="{{t.life.img_alt}}" width="1280" height="1707">
+    </picture>
+    <figcaption>{{t.life.cap}}</figcaption>
+  </figure>
+</section>
+
+<section id="gallery" class="chapter chapter--gallery">
+  <header class="chapter__head">
+    <p class="chapter__num">{{t.gallery.chapter}}</p>
+    <h2 class="chapter__title">
+      {{t.gallery.title_l1}}<br>
+      <em>{{t.gallery.title_l2}}</em>
+    </h2>
+  </header>
+
+  <ul class="grid" role="list">
+    <li class="tile">
+      <a href="images/img_4886-1920.webp" data-caption="{{t.gallery.cap_pier}}">
+        <picture>
+          <source type="image/avif" srcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <source type="image/webp" srcset="images/img_4886-640.webp 640w, images/img_4886-1280.webp 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <img loading="lazy" decoding="async" src="images/img_4886-640.webp" alt="{{t.gallery.alt_pier}}" width="640" height="853">
+        </picture>
+      </a>
+    </li>
+    <li class="tile">
+      <a href="images/img_9214-1920.webp" data-caption="{{t.gallery.cap_sunset}}">
+        <picture>
+          <source type="image/avif" srcset="images/img_9214-640.avif 640w, images/img_9214-1280.avif 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <source type="image/webp" srcset="images/img_9214-640.webp 640w, images/img_9214-1280.webp 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <img loading="lazy" decoding="async" src="images/img_9214-640.webp" alt="{{t.gallery.alt_sunset}}" width="640" height="853">
+        </picture>
+      </a>
+    </li>
+    <li class="tile">
+      <a href="images/img_9210-1920.webp" data-caption="{{t.gallery.cap_clouds}}">
+        <picture>
+          <source type="image/avif" srcset="images/img_9210-640.avif 640w, images/img_9210-1280.avif 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <source type="image/webp" srcset="images/img_9210-640.webp 640w, images/img_9210-1280.webp 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <img loading="lazy" decoding="async" src="images/img_9210-640.webp" alt="{{t.gallery.alt_clouds}}" width="640" height="853">
+        </picture>
+      </a>
+    </li>
+    <li class="tile">
+      <a href="images/img_4689-1920.webp" data-caption="{{t.gallery.cap_alley}}">
+        <picture>
+          <source type="image/avif" srcset="images/img_4689-640.avif 640w, images/img_4689-1280.avif 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <source type="image/webp" srcset="images/img_4689-640.webp 640w, images/img_4689-1280.webp 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <img loading="lazy" decoding="async" src="images/img_4689-640.webp" alt="{{t.gallery.alt_alley}}" width="640" height="853">
+        </picture>
+      </a>
+    </li>
+    <li class="tile">
+      <a href="images/img_4690-1920.webp" data-caption="{{t.gallery.cap_swings}}">
+        <picture>
+          <source type="image/avif" srcset="images/img_4690-640.avif 640w, images/img_4690-1280.avif 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <source type="image/webp" srcset="images/img_4690-640.webp 640w, images/img_4690-1280.webp 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <img loading="lazy" decoding="async" src="images/img_4690-640.webp" alt="{{t.gallery.alt_swings}}" width="640" height="853">
+        </picture>
+      </a>
+    </li>
+    <li class="tile">
+      <a href="images/img_5052-1920.webp" data-caption="{{t.gallery.cap_gazebo}}">
+        <picture>
+          <source type="image/avif" srcset="images/img_5052-640.avif 640w, images/img_5052-1280.avif 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <source type="image/webp" srcset="images/img_5052-640.webp 640w, images/img_5052-1280.webp 1280w" sizes="(min-width: 900px) 33vw, 100vw">
+          <img loading="lazy" decoding="async" src="images/img_5052-640.webp" alt="{{t.gallery.alt_gazebo}}" width="640" height="480">
+        </picture>
+      </a>
+    </li>
+  </ul>
+</section>
+
+<section id="events" class="chapter chapter--events">
+  <header class="chapter__head chapter__head--center">
+    <p class="chapter__num">{{t.events.chapter}}</p>
+    <h2 class="chapter__title">
+      {{t.events.title_l1}}<br>
+      <em>{{t.events.title_l2}}</em>
+    </h2>
+    {{ICS_LINK}}
+  </header>
+  {{EVENTS}}
+</section>
+
+<section id="contact" class="chapter chapter--contact">
+  <header class="chapter__head chapter__head--center">
+    <p class="chapter__num">{{t.contact.chapter}}</p>
+    <h2 class="chapter__title">
+      {{t.contact.title_l1}}<br>
+      <em>{{t.contact.title_l2}}</em>
+    </h2>
+  </header>
+
+  <div class="contact">
+    <article>
+      <h3>{{t.contact.h_address}}</h3>
+      <address>{{t.contact.address_html}}</address>
+    </article>
+    <article>
+      <h3>{{t.contact.h_geo}}</h3>
+      <p class="mono">49.8217° N<br>34.7592° E</p>
+      <p><a href="https://www.openstreetmap.org/?mlat=49.8217&amp;mlon=34.7592#map=14/49.8217/34.7592" rel="noopener" target="_blank">{{t.contact.open_map}}</a></p>
+    </article>
+    <article>
+      <h3>{{t.contact.h_neighbours}}</h3>
+      <ul class="neighbours" role="list">
+        <li><span class="neighbours__name">{{t.contact.n1_name}}</span><span class="neighbours__meta">{{t.contact.n1_meta}}</span></li>
+        <li><span class="neighbours__name">{{t.contact.n2_name}}</span><span class="neighbours__meta">{{t.contact.n2_meta}}</span></li>
+        <li><span class="neighbours__name">{{t.contact.n3_name}}</span><span class="neighbours__meta">{{t.contact.n3_meta}}</span></li>
+      </ul>
+    </article>
+  </div>
+
+  <div class="contact-emails">
+    <h3 class="contact-emails__title">{{t.contact.emails_h}}</h3>
+    <p class="contact-emails__lede">{{t.contact.emails_lede}}</p>
+    {{CONTACTS}}
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot__wrap">
+    <div class="foot__brand">
+      <span class="brand__mark" aria-hidden="true">
+        <svg class="flag" viewBox="0 0 40 28" role="img" aria-label="{{t.hero.title}}">
+          <defs>
+            <clipPath id="flag-clip-foot" clipPathUnits="userSpaceOnUse">
+              <rect x="2" y="3" width="36" height="22"/>
+            </clipPath>
+          </defs>
+          <g class="flag__fabric" clip-path="url(#flag-clip-foot)">
+            <g class="flag__strip"><rect x="1.8"  y="3" width="6.4" height="11" fill="#005BBB"/><rect x="1.8"  y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="7.8"  y="3" width="6.4" height="11" fill="#005BBB"/><rect x="7.8"  y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="13.8" y="3" width="6.4" height="11" fill="#005BBB"/><rect x="13.8" y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="19.8" y="3" width="6.4" height="11" fill="#005BBB"/><rect x="19.8" y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="25.8" y="3" width="6.4" height="11" fill="#005BBB"/><rect x="25.8" y="14" width="6.4" height="11" fill="#FFD500"/></g>
+            <g class="flag__strip"><rect x="31.8" y="3" width="6.4" height="11" fill="#005BBB"/><rect x="31.8" y="14" width="6.4" height="11" fill="#FFD500"/></g>
+          </g>
+          <line class="flag__pole" x1="2" y1="2" x2="2" y2="27" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span>{{t.hero.title}}</span>
+    </div>
+    <p class="foot__text">{{t.foot.text}}</p>
+    <p class="foot__meta">© <span id="year">2026</span> &middot; {{t.foot.meta}}</p>
+  </div>
+</footer>
+
+<dialog class="lightbox" id="lightbox" aria-label="{{t.lightbox.aria}}">
+  <button class="lightbox__close" aria-label="{{t.lightbox.close}}">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18"/>
+    </svg>
+  </button>
+  <img alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==">
+  <p class="lightbox__caption"></p>
+</dialog>
+
+<script src="script.js" defer></script>
+</body>
+</html>

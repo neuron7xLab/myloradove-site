@@ -1,0 +1,22 @@
+# Build output
+/dist/
+
+# Node / Playwright
+/node_modules/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Lighthouse
+/.lighthouseci/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc

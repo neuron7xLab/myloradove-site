@@ -1,0 +1,29 @@
+{
+  "origin":       "https://myloradove.com.ua",
+  "email_domain": "myloradove.com.ua",
+  "lang":         "uk",
+  "locale":       "uk_UA",
+  "title":        "Милорадове — село на Полтавщині",
+  "description":  "Милорадове — село на лівому березі річки Ковжижа, Полтавський район Полтавської області. Історія, природа, культура, інфраструктура, фото.",
+  "og_description": "Тихе село на лівому березі Ковжижі. Історія, природа, культура.",
+  "og_image":     "images/img_4886-1280.webp",
+  "og_image_w":   1280,
+  "og_image_h":   1707,
+  "author":       "Жителі села Милорадове",
+  "theme_dark":   "#0c1a22",
+  "theme_light":  "#f6f1e7",
+  "geo": {
+    "lat":        49.8217,
+    "lon":        34.7592,
+    "elevation":  107
+  },
+  "address": {
+    "country":   "UA",
+    "region":    "Полтавська область",
+    "locality":  "Милорадове",
+    "postalCode":"38630",
+    "street":    "вул. Центральна, 24"
+  },
+  "containedIn": "Великорублівська сільська громада",
+  "alternateNames": ["Новоселівка", "Myloradove"]
+}

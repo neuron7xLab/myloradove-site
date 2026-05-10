@@ -1,0 +1,114 @@
+name: ci
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+# Fail-closed pipeline. Ordered: cheap deterministic gates first, heavy E2E last.
+# Each job is independent; later jobs depend on earlier to avoid wasting runners.
+jobs:
+
+  # ── 1. Build + deterministic audit (fast, always runs) ─────────────
+  audit:
+    name: build + audit.py
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: build
+        run: python3 build.py
+      - name: audit
+        run: python3 audit.py
+      - name: upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  # ── 2. HTML validation (Nu HTML Checker via vnu-jar npm package) ───
+  html-validation:
+    name: Nu HTML Checker
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: audit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: build
+        run: python3 build.py
+      - name: install vnu
+        run: npm i -D vnu-jar@^23
+      - name: validate HTML
+        run: |
+          java -jar node_modules/vnu-jar/build/dist/vnu.jar \
+            --errors-only \
+            --skip-non-html \
+            dist/index.html dist/404.html
+
+  # ── 3. Playwright smoke + axe ─────────────────────────────────────
+  playwright:
+    name: Playwright + axe-core
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: audit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: build
+        run: python3 build.py
+      - name: install
+        run: npm ci || npm i
+      - name: install playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: test
+        run: npx playwright test --project=desktop
+      - name: upload playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+
+  # ── 4. Lighthouse CI (performance, a11y, best-practices, SEO) ──────
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: audit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: build
+        run: python3 build.py
+      - name: install
+        run: npm ci || npm i
+      - name: lhci
+        run: npx lhci autorun --config=lighthouserc.json

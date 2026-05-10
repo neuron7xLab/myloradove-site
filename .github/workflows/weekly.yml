@@ -1,0 +1,81 @@
+name: weekly-audit
+
+on:
+  schedule:
+    # Fires every Monday at 06:00 UTC (09:00 Kyiv).
+    # Catches regressions on production that ci.yml can only see at PR time.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: "URL to probe (defaults to production)"
+        required: false
+        default: "https://myloradove.com.ua"
+
+jobs:
+
+  # ── 1. Deterministic rebuild + audit.py on HEAD of main ──────────
+  rebuild-and-audit:
+    name: rebuild + audit HEAD
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: build
+        run: python3 build.py
+      - name: audit
+        run: python3 audit.py
+
+  # ── 2. Lighthouse CI against production URL ──────────────────────
+  lighthouse-production:
+    name: LHCI against production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: install lhci
+        run: npm i -D @lhci/cli@^0.14.0
+      - name: run lhci against live URL
+        env:
+          SITE_URL: ${{ github.event.inputs.site_url || 'https://myloradove.com.ua' }}
+        run: |
+          npx lhci collect \
+            --url="$SITE_URL" \
+            --numberOfRuns=3 \
+            --settings.preset=desktop
+          npx lhci assert --preset=lighthouse:recommended \
+            --assertions.categories:performance='["error",{"minScore":0.90}]' \
+            --assertions.categories:accessibility='["error",{"minScore":0.95}]' \
+            --assertions.categories:best-practices='["error",{"minScore":0.95}]' \
+            --assertions.categories:seo='["error",{"minScore":0.95}]'
+
+  # ── 3. HTTP hygiene: SSL, security headers on production ─────────
+  http-hygiene:
+    name: HTTP security headers
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: verify security headers
+        env:
+          URL: ${{ github.event.inputs.site_url || 'https://myloradove.com.ua' }}
+        run: |
+          echo "── response headers from $URL ─────────────"
+          hdrs=$(curl -sI -L "$URL" | tr -d '\r')
+          echo "$hdrs"
+          echo "── required headers present? ──────────────"
+          for h in "strict-transport-security" "x-content-type-options" \
+                   "x-frame-options" "referrer-policy" \
+                   "content-security-policy" "permissions-policy"; do
+            if echo "$hdrs" | grep -qi "^$h:"; then
+              echo "  [OK]   $h"
+            else
+              echo "  [FAIL] $h MISSING"
+              exit 1
+            fi
+          done

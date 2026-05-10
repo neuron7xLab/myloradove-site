@@ -1,0 +1,183 @@
+# ── English locale ─────────────────────────────────────────────────
+# Transliteration follows Ukrainian state standard (Cabinet of Ministers
+# Resolution №55 of 27 Jan 2010): и → y, і → i, Г → H (Г), Х → Kh, etc.
+# Hand-translated. Same keys as locale.uk.toml.
+
+[meta]
+lang           = "en"
+title          = "Myloradove — a village in Poltava oblast"
+description    = "Myloradove — a Ukrainian village on the left bank of the Kovzhyzha river, Poltava district, Poltava oblast. History, nature, culture, facts, photos."
+og_title       = "Myloradove — a village in Poltava oblast"
+og_description = "A quiet village on the left bank of the Kovzhyzha. History, nature, culture."
+locale         = "en_US"
+author         = "The residents of Myloradove"
+
+[skip]
+link = "Skip to main content"
+
+[nav]
+about   = "Village"
+nature  = "Nature"
+history = "History"
+culture = "Culture"
+life    = "Life"
+gallery = "Gallery"
+events  = "Events"
+contact = "Contact"
+aria_home = "Myloradove — home"
+aria_menu = "Site sections"
+toggle_open  = "Open menu"
+toggle_close = "Close menu"
+
+[lang_switch]
+to_other_label = "Перемкнути на українську"
+other_code     = "UK"
+
+[hero]
+top_left  = "Poltava oblast · Poltava district"
+top_right = "49°49′18″ N · 34°45′33″ E"
+eyebrow   = "A village above the Kovzhyzha"
+title     = "Myloradove"
+img_alt   = "A wooden pier and gazebo over a pond at sunset in Myloradove"
+sub       = "A quiet village on the left bank of the Kovzhyzha. Here neighbours know each other by name — and will gladly remember yours."
+cue       = "below"
+aria_cue  = "Scroll"
+
+[hero.stats]
+founded_k   = "Founded"
+founded_v   = "around <em>1816</em>"
+residents_k = "Residents"
+residents_v = "1&nbsp;059"
+elev_k      = "Elevation"
+elev_v      = "107 <span class=\"unit\">m</span>"
+comm_k      = "Hromada"
+comm_v      = "Velyki Rubli"
+
+[about]
+chapter   = "I · The village"
+title_l1  = "An old-school"
+title_l2  = "Poltava village."
+lede      = "Traditional homesteads, wide kitchen gardens, clean streets. Road <b>T-1707</b> runs through Myloradove; beyond it begin the black-earth soils of the Poltava Plain, and nearby lies the <em>«Velykyi i Malyi Lyman»</em> landscape reserve."
+p1        = "The village sits on the left bank of the Kovzhyzha — a left tributary of the Vorskla that dries out in summer. A kilometre downstream is Hlobivka; upstream, the village of Kovzhyzha; across the river, Chobotari. Beyond the fields stretch the pine forests of the Borivske urochyshche."
+p2        = "Myloradove belongs to the Velyki Rubli rural hromada of Poltava district and is home to <b>1&nbsp;059</b> people. Its historical name is <em>Novoselivka</em>. Postal code — 38630."
+
+[nature]
+chapter   = "II · Water and land"
+title_l1  = "A quiet river,"
+title_l2  = "ponds that brim."
+lede      = "The village sits on the left bank of the <b>Kovzhyzha</b> — a left tributary of the Vorskla that dries out in summer. Upstream lies the village of Kovzhyzha; a kilometre down is Hlobivka; across the river stands Chobotari. All around — black earth; further on — the pine forests of the Borivske urochyshche."
+img_main_alt = "A pond reflecting sky and clouds in Myloradove"
+cap_main  = "The great pond at dawn. Fish drift just under the surface."
+img_l_alt = "A reed-lined pond at dusk in summer"
+cap_l     = "Reeds rustle at dusk."
+img_r_alt = "A wooden gazebo on the bank of a pond among trees"
+cap_r     = "A gazebo on the bank — people come here to fish and listen to the quiet."
+
+[history]
+chapter  = "III · History"
+title_l1 = "From khutir"
+title_l2 = "to hromada."
+aria     = "Village timeline"
+y1       = "c. 1816"
+h1       = "Foundation"
+p1       = "The village grew out of a khutir — a small homestead — of the Myloradovych family, Poltava-region landowners. Their surname gave the place its name."
+y2       = "1826—1840"
+h2       = "Schubert's maps"
+p2       = "On the Russian Imperial military-topographic maps surveyed under F. F. Schubert, the settlement appears as <em>«Myloradovych's khutir»</em>."
+y3       = "20th century"
+h3       = "The Soviet period"
+p3       = "The collective-farm era: a school and a House of Culture were built. After the Second World War, pine groves were planted around the village — today protected as landscape reserves."
+y4       = "until 2020"
+h4       = "Kotelva district"
+p4       = "Administratively, the village belonged to Kotelva district of Poltava oblast."
+y5       = "2020 — present"
+h5       = "A new hromada"
+p5       = "Following Ukraine's decentralisation reform, Myloradove joined the <b>Velyki Rubli rural hromada</b> of Poltava district."
+
+[culture]
+chapter  = "IV · Culture"
+title_l1 = "Song and dance —"
+title_l2 = "the heart of Myloradove."
+img_alt  = "A wooden sculpture of a guitar in the village park of Myloradove — a symbol of song and dance"
+cap      = "The culture park. The guitar stands as though it had just been playing."
+lede     = "The House of Culture is the real heart of the village. Everyone gathers here — elders and children alike — for Village Day, concerts, and traditional evening gatherings (vechornytsi). Poltava customs, folk crafts, songs — all of it living, passed from hand to hand."
+quote    = "«If a village still sings — the village still lives.<br>Myloradove always sings.»"
+
+[life]
+chapter  = "V · Life"
+title_l1 = "Infrastructure"
+title_l2 = "and everyday."
+i1_h = "Education"
+i1_p = "Myloradove secondary school, grades 1 through 11."
+i1_a = "33 Tsentralna St."
+i2_h = "«Lastivka» kindergarten"
+i2_p = "Kindergarten for the village's youngest residents."
+i3_h = "House of Culture"
+i3_p = "A centre for song, dance, and community events."
+i3_a = "Tsentralna St."
+i4_h = "Healthcare"
+i4_p = "General-practice / family-medicine outpatient clinic and a feldsher-midwife point."
+i5_h = "Starosta's office"
+i5_p = "A Point of Invincibility; community administration."
+i5_a = "24 Tsentralna St."
+i6_h = "Transport"
+i6_p = "Bus service to Poltava and the district centre."
+img_alt = "A church with blue cupolas and a public square in the centre of Myloradove"
+cap  = "The centre of the village. Trampoline behind the fence; church next to it."
+
+[gallery]
+chapter  = "VI · Gallery"
+title_l1 = "The village"
+title_l2 = "in frames."
+cap_pier      = "Pier at sunset"
+alt_pier      = "A pier on a pond at sunset"
+cap_sunset    = "Sunset over the water"
+alt_sunset    = "Sunset over a pond"
+cap_clouds    = "Mirrored clouds"
+alt_clouds    = "Clouds reflected in water"
+cap_alley     = "A park alley"
+alt_alley     = "An alley in the village park"
+cap_swings    = "Park swings"
+alt_swings    = "Swings in the village park"
+cap_gazebo    = "A gazebo above the water"
+alt_gazebo    = "A gazebo above the water"
+
+[events]
+chapter   = "VII · Events"
+title_l1  = "What's on"
+title_l2  = "in the village."
+ics       = "Subscribe in calendar →"
+empty     = "No announcements yet. Please check back soon."
+empty_soon= "No scheduled events at the moment. Watch for updates."
+archive   = "Past events"
+
+[contact]
+chapter       = "VIII · Contact"
+title_l1      = "How to find us"
+title_l2      = "and write to us."
+h_address     = "Address"
+address_html  = "Myloradove village<br>Velyki Rubli hromada<br>Poltava district,<br>Poltava oblast<br>38630"
+h_geo         = "Coordinates"
+h_neighbours  = "Neighbouring villages"
+open_map      = "Open map →"
+n1_name       = "Kovzhyzha"
+n1_meta       = "upstream"
+n2_name       = "Hlobivka"
+n2_meta       = "1 km downstream"
+n3_name       = "Chobotari"
+n3_meta       = "across the river"
+emails_h      = "Write to us"
+emails_lede   = "Public village addresses. No forms, no intermediaries, no data collection — plain email, forwarded through Cloudflare Email Routing."
+copy_label    = "Copy"
+copy_done     = "Copied"
+copy_aria     = "Copy"
+copy_status_ok= "Copied:"
+copy_status_err = "Copy failed. Select and press Ctrl+C."
+
+[foot]
+text    = "A grass-roots village site. All material is drawn from open sources — official records of the Velyki Rubli rural hromada, Wikipedia, historical Schubert maps, and residents' photographs."
+meta    = "MADE WITH LOVE"
+
+[lightbox]
+aria  = "Photo viewer"
+close = "Close"

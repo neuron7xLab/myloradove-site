@@ -1,0 +1,49 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "dist",
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "throttlingMethod": "devtools",
+        "skipAudits": ["canonical"]
+      }
+    },
+    "assertMatrix": [
+      {
+        "matchingUrlPattern": ".*/404\\.html$",
+        "assertions": {
+          "categories:performance":    ["error", { "minScore": 0.95 }],
+          "categories:accessibility":  ["error", { "minScore": 0.95 }],
+          "categories:best-practices": ["error", { "minScore": 0.95 }]
+        }
+      },
+      {
+        "matchingUrlPattern": "(?!.*/404\\.html$).*",
+        "assertions": {
+          "categories:performance":    ["error", { "minScore": 0.95 }],
+          "categories:accessibility":  ["error", { "minScore": 0.95 }],
+          "categories:best-practices": ["error", { "minScore": 0.95 }],
+          "categories:seo":            ["error", { "minScore": 0.95 }],
+
+          "first-contentful-paint":       ["error", { "maxNumericValue": 1500 }],
+          "largest-contentful-paint":     ["error", { "maxNumericValue": 2500 }],
+          "cumulative-layout-shift":      ["error", { "maxNumericValue": 0.05 }],
+          "total-blocking-time":          ["error", { "maxNumericValue": 200 }],
+
+          "render-blocking-resources":    ["error", { "maxLength": 0 }],
+          "unused-javascript":            ["warn",  { "maxLength": 0 }],
+          "uses-optimized-images":        ["error", { "maxLength": 0 }],
+          "uses-responsive-images":       ["warn",  { "maxLength": 0 }],
+          "modern-image-formats":         ["error", { "maxLength": 0 }],
+          "offscreen-images":             ["warn",  { "maxLength": 0 }],
+
+          "total-byte-weight":            ["warn",  { "maxNumericValue": 1200000 }]
+        }
+      }
+    ],
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

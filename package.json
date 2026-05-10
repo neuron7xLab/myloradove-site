@@ -1,0 +1,25 @@
+{
+  "name": "myloradove-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static site for Myloradove village, Poltava oblast, Ukraine. Zero runtime deps.",
+  "license": "MIT",
+  "scripts": {
+    "build":       "python3 build.py",
+    "audit":       "python3 audit.py",
+    "serve":       "python3 -m http.server 8787 --directory dist",
+    "test":        "playwright test",
+    "test:update": "playwright test --update-snapshots",
+    "lhci":        "lhci autorun --config=lighthouserc.json",
+    "vnu":         "vnu --errors-only --skip-non-html dist/index.html dist/404.html"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@lhci/cli":            "^0.14.0",
+    "@playwright/test":     "^1.48.0",
+    "vnu-jar":              "^23.4.11"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

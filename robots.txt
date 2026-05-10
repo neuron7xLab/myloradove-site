@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://miloradove.com.ua/sitemap.xml
