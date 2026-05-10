@@ -690,37 +690,41 @@
   .flag__strip {
     transform-box: fill-box;
     transform-origin: 50% 50%;
-    animation: strip-wave 5.5s cubic-bezier(.45, 0, .55, 1) infinite;
+    animation: strip-wave 4.2s cubic-bezier(.45, 0, .55, 1) infinite;
     will-change: transform;
   }
-  .flag__fabric > :nth-child(1) { animation-delay: -0.22s; --amp: 0.20; }
-  .flag__fabric > :nth-child(2) { animation-delay: -0.46s; --amp: 0.34; }
-  .flag__fabric > :nth-child(3) { animation-delay: -0.74s; --amp: 0.50; }
-  .flag__fabric > :nth-child(4) { animation-delay: -1.06s; --amp: 0.66; }
-  .flag__fabric > :nth-child(5) { animation-delay: -1.42s; --amp: 0.80; }
-  .flag__fabric > :nth-child(6) { animation-delay: -1.84s; --amp: 0.95; }
+  /* Visible-but-not-flutter calibration. The flag renders 32×22 px in
+     the nav and 34×24 px in the footer — at that size, sub-pixel
+     amplitudes vanish. We need ≥1 px crests to read as wind. */
+  .flag__fabric > :nth-child(1) { animation-delay: -0.16s; --amp: 0.30; }
+  .flag__fabric > :nth-child(2) { animation-delay: -0.34s; --amp: 0.50; }
+  .flag__fabric > :nth-child(3) { animation-delay: -0.54s; --amp: 0.72; }
+  .flag__fabric > :nth-child(4) { animation-delay: -0.76s; --amp: 0.92; }
+  .flag__fabric > :nth-child(5) { animation-delay: -1.00s; --amp: 1.10; }
+  .flag__fabric > :nth-child(6) { animation-delay: -1.26s; --amp: 1.25; }
 
   @keyframes strip-wave {
       0%, 100% { transform: translateY(0) skewY(0deg) scaleX(1); }
-     25%       { transform: translateY(calc(var(--amp, 1) * -0.28px))
-                            skewY(calc(var(--amp, 1) * -0.55deg))
-                            scaleX(0.997); }
+     25%       { transform: translateY(calc(var(--amp, 1) * -0.85px))
+                            skewY(calc(var(--amp, 1) * -1.6deg))
+                            scaleX(0.992); }
      50%       { transform: translateY(0) skewY(0deg) scaleX(1); }
-     75%       { transform: translateY(calc(var(--amp, 1) *  0.24px))
-                            skewY(calc(var(--amp, 1) *  0.50deg))
-                            scaleX(1.0015); }
+     75%       { transform: translateY(calc(var(--amp, 1) *  0.75px))
+                            skewY(calc(var(--amp, 1) *  1.4deg))
+                            scaleX(1.005); }
   }
 
-  /* Whole-fabric ride: a slow 9-s tilt around the pole. Anchored to
-     the pole edge (x=2) so it feels hung, not free-floating. */
+  /* Whole-fabric ride — slow 7-s tilt around the pole.  Larger range
+     than the per-strip wave so the flag visibly hangs on the lull and
+     lifts on the gust before the rippling crest crosses it. */
   .flag__fabric {
     transform-box: fill-box;
     transform-origin: 0% 50%;
-    animation: flag-breathe 9s ease-in-out infinite alternate;
+    animation: flag-breathe 7s ease-in-out infinite alternate;
   }
   @keyframes flag-breathe {
-    from { transform: rotate(-0.18deg); }
-    to   { transform: rotate( 0.42deg); }
+    from { transform: rotate(-0.6deg) translateY(0.2px); }
+    to   { transform: rotate( 1.4deg) translateY(-0.2px); }
   }
 
   @media (prefers-reduced-motion: reduce) {
