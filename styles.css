@@ -648,8 +648,17 @@
     z-index: 100;
     padding-block: 18px;
     padding-inline: var(--pad-x);
+    /* Dedicated darken-band behind the nav region only — does not
+       darken the rest of the hero. Bawah / Aman use this exact
+       trick: a transparent → ink gradient (top-down) ~120 px tall
+       so white nav text reads on every photo regardless of sky
+       luminance, while the photo itself stays clean. */
+    background: linear-gradient(180deg,
+      color-mix(in srgb, var(--c-ink-deep) 55%, transparent) 0%,
+      color-mix(in srgb, var(--c-ink-deep) 25%, transparent) 60%,
+      transparent 100%);
     transition:
-      background-color var(--dur-base) var(--ease-smooth),
+      background var(--dur-base) var(--ease-smooth),
       backdrop-filter var(--dur-base) var(--ease-smooth),
       padding-block var(--dur-base) var(--ease-smooth);
   }
@@ -683,10 +692,9 @@
     font-family: var(--ff-serif);
     font-size: 1.04rem;
     letter-spacing: 0.005em;
-    color: var(--c-paper);
-    /* Single soft glow — same restraint as the nav links.
-       Difference-blend dropped: it muddied glyphs against warm sky. */
-    text-shadow: 0 1px 16px color-mix(in srgb, var(--c-ink-deep) 55%, transparent);
+    color: #ffffff;
+    /* Match the nav-menu shadow profile — tight, sharp, no halo. */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
     transition: color var(--dur-base) var(--ease-smooth);
   }
   .nav.is-scrolled .brand {
@@ -788,14 +796,15 @@
     display: flex;
     gap: clamp(var(--sp-6), 2.4vw, var(--sp-9));
     /* Bawah-DNA: small uppercase sans, medium weight, generous
-       letter-spacing — the editorial-hospitality signature.
-       Reads as quiet authority, not as label. */
+       letter-spacing. Pure paper white on the nav darken-band,
+       single tight shadow for definition (no blur halo — that was
+       the source of the muddy-dark complaint). */
     font-size: 0.78rem;
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--c-paper);
-    text-shadow: 0 1px 16px color-mix(in srgb, var(--c-ink-deep) 55%, transparent);
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
     padding-inline-end: 88px;
   }
   @media (width <= 1024px) and (width > 860px) {
