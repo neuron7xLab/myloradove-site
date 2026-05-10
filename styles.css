@@ -128,10 +128,13 @@
     --c-paper-warm: #ede5d1;
     --c-paper-cool: #faf5ea;
 
-    /* gold — sun disk reflected on water */
-    --c-gold:       #c8a55b;
-    --c-gold-deep:  #9c7b39;
-    --c-gold-soft:  #e3cc97;
+    /* gold accent — Bawah-DNA editorial-luxury "old gold".
+       #d4af37 is the canonical hue used across Aman / Bawah /
+       Capella / Belmond. Brighter and more chromatic than the
+       muted craft tone we had before. */
+    --c-gold:       #d4af37;
+    --c-gold-deep:  #a88a28;
+    --c-gold-soft:  #e6c766;
 
     /* reed — wet meadow green */
     --c-reed:       #5a6a3b;
@@ -205,8 +208,8 @@
      Only applied where supported; silently no-ops elsewhere. */
   @supports (color: color(display-p3 1 0 0)) {
     :root {
-      --c-gold:      color(display-p3 0.78 0.65 0.36);
-      --c-gold-deep: color(display-p3 0.60 0.48 0.22);
+      --c-gold:      color(display-p3 0.83 0.69 0.22);
+      --c-gold-deep: color(display-p3 0.66 0.54 0.16);
       --c-reed:      color(display-p3 0.35 0.41 0.23);
       --c-rust:      color(display-p3 0.55 0.29 0.17);
     }
@@ -551,44 +554,15 @@
       box-shadow var(--dur-base) var(--ease-smooth),
       inset-block-start var(--dur-base) var(--ease-smooth);
   }
-  /* Conic gold sheen rotating behind the capsule on hover.
-     Sits on the ::before pseudo as a gradient mask — capsule body
-     stays glass, only the rim picks up moving gold. */
-  .lang-switch::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: conic-gradient(from 0deg,
-      transparent 0deg,
-      color-mix(in oklch, var(--c-gold) 80%, transparent) 90deg,
-      transparent 180deg,
-      color-mix(in oklch, var(--c-gold-soft) 70%, transparent) 270deg,
-      transparent 360deg);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-            mask-composite: exclude;
-    opacity: 0;
-    transition: opacity var(--dur-base) var(--ease-smooth);
-    pointer-events: none;
-    z-index: -1;
-  }
+  /* Quiet hover: gold rim, no animation. Bawah-DNA — capsule earns
+     attention by hairline contrast, not by spinning ornament. */
   .lang-switch:hover {
-    background: color-mix(in srgb, var(--c-ink-deep) 50%, transparent);
-    border-color: color-mix(in srgb, var(--c-gold) 60%, transparent);
+    background: color-mix(in srgb, var(--c-ink-deep) 42%, transparent);
+    border-color: color-mix(in srgb, var(--c-gold) 70%, transparent);
     transform: translateY(-1px);
     box-shadow:
-      0 1px 0 inset color-mix(in srgb, var(--c-paper) 28%, transparent),
-      0 12px 30px -12px color-mix(in srgb, var(--c-gold-deep) 55%, transparent);
-  }
-  .lang-switch:hover::before {
-    opacity: 1;
-    animation: lang-rim 4.5s linear infinite;
-  }
-  @keyframes lang-rim {
-    to { transform: rotate(360deg); }
+      0 1px 0 inset color-mix(in srgb, var(--c-paper) 24%, transparent),
+      0 10px 26px -12px color-mix(in srgb, var(--c-ink-deep) 55%, transparent);
   }
   .lang-switch:active { transform: translateY(0); }
 
@@ -801,19 +775,20 @@
 
   .nav__menu {
     display: flex;
-    gap: clamp(var(--sp-5), 2vw, var(--sp-8));
-    /* Anthropic / Linear / Vercel pattern: clean light sans, regular
-       weight, subtle separation from photo via a single soft dark
-       glow — never a heavy plate, never bold. Crisp, not loud. */
-    font-size: 0.94rem;
-    font-weight: 400;
-    letter-spacing: 0.005em;
+    gap: clamp(var(--sp-6), 2.4vw, var(--sp-9));
+    /* Bawah-DNA: small uppercase sans, medium weight, generous
+       letter-spacing — the editorial-hospitality signature.
+       Reads as quiet authority, not as label. */
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     color: var(--c-paper);
-    text-shadow: 0 1px 18px color-mix(in srgb, var(--c-ink-deep) 60%, transparent);
-    padding-inline-end: 82px;
+    text-shadow: 0 1px 16px color-mix(in srgb, var(--c-ink-deep) 55%, transparent);
+    padding-inline-end: 88px;
   }
   @media (width <= 1024px) and (width > 860px) {
-    .nav__menu { gap: var(--sp-4); font-size: 0.88rem; }
+    .nav__menu { gap: var(--sp-5); font-size: 0.72rem; letter-spacing: 0.15em; }
   }
   .nav.is-scrolled .nav__menu {
     color: var(--c-ink);
@@ -826,25 +801,20 @@
       color var(--dur-fast) var(--ease-smooth),
       letter-spacing var(--dur-base) var(--ease-smooth);
   }
-  /* 2-stop gradient bar that ripples open from the centre on hover —
-     gold→paper→reed reads as illuminated metal across any backdrop. */
+  /* Single hairline gold rule — the Bawah signature for nav state.
+     1 px solid var(--c-gold), opens centre-out on hover/current,
+     no halo, no gradient noise. Quiet luxury. */
   .nav__menu a::after {
     content: '';
     position: absolute;
-    inset-block-end: -3px;
+    inset-block-end: -6px;
     inset-inline-start: 50%;
     inset-inline-end:   50%;
-    block-size: 2px;
-    border-radius: 2px;
-    background: linear-gradient(90deg,
-      var(--c-gold-soft) 0%,
-      var(--c-paper)     50%,
-      var(--c-gold-deep) 100%);
-    box-shadow: 0 0 12px color-mix(in srgb, var(--c-gold) 65%, transparent);
+    block-size: 1px;
+    background: var(--c-gold);
     transition:
-      inset-inline-start var(--dur-base) var(--ease-out),
-      inset-inline-end   var(--dur-base) var(--ease-out),
-      box-shadow         var(--dur-base) var(--ease-out);
+      inset-inline-start 360ms cubic-bezier(.22, .61, .36, 1),
+      inset-inline-end   360ms cubic-bezier(.22, .61, .36, 1);
   }
   .nav__menu a:hover,
   .nav__menu a:focus-visible {
