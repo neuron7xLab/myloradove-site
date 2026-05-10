@@ -27,22 +27,15 @@ contact = "Contact"
 aria_home = "Myloradove — home"
 aria_menu = "Site sections"
 toggle_open  = "Open menu"
-toggle_close = "Close menu"
-
 [lang_switch]
 to_other_label = "Перемкнути на українську"
 other_code     = "UK"
 
 [hero]
-top_left    = "Poltava oblast · Poltava district"
 top_right_k = "Coordinates"
 top_right   = "49°49′18″ N · 34°45′33″ E"
-eyebrow   = "A village above the Kovzhyzha · founded c. 1816"
 title     = "Myloradove"
 img_alt   = "A wooden pier and gazebo over a pond at sunset in Myloradove"
-sub       = "A quiet village on the left bank of the Kovzhyzha. Here neighbours know each other by name — and will gladly remember yours."
-access    = "75 min from Poltava · 3 h from Kyiv · 1 h off the H&#8209;12 motorway"
-cue       = "Scroll to explore"
 aria_cue  = "Scroll"
 
 [hero.stats]
@@ -67,7 +60,6 @@ p2        = "Myloradove belongs to the Velyki Rubli rural hromada of Poltava dis
 chapter   = "II · Water and land"
 title_l1  = "A quiet river,"
 title_l2  = "ponds that brim."
-lede      = "The village sits on the left bank of the <b>Kovzhyzha</b> — a left tributary of the Vorskla that dries out in summer. Upstream lies the village of Kovzhyzha; a kilometre down is Hlobivka; across the river stands Chobotari. All around — black earth; further on — the pine forests of the Borivske urochyshche."
 img_main_alt = "A pond reflecting sky and clouds in Myloradove"
 cap_main  = "The great pond at dawn. Fish drift just under the surface."
 img_l_alt = "A reed-lined pond at dusk in summer"
@@ -100,9 +92,9 @@ p5       = "Following Ukraine's decentralisation reform, Myloradove joined the <
 chapter  = "IV · Culture"
 title_l1 = "Song and dance —"
 title_l2 = "the heart of Myloradove."
+lede     = "The House of Culture is the real heart of the village. Everyone gathers here — elders and children alike — for Village Day, concerts, and traditional evening gatherings (vechornytsi). Poltava customs, folk crafts, songs — all of it living, passed from hand to hand."
 img_alt  = "A wooden sculpture of a guitar in the village park of Myloradove — a symbol of song and dance"
 cap      = "The culture park. The guitar stands as though it had just been playing."
-lede     = "The House of Culture is the real heart of the village. Everyone gathers here — elders and children alike — for Village Day, concerts, and traditional evening gatherings (vechornytsi). Poltava customs, folk crafts, songs — all of it living, passed from hand to hand."
 quote    = "«If a village still sings — the village still lives.<br>Myloradove always sings.»"
 
 [life]
@@ -171,7 +163,6 @@ n3_meta       = "across the river"
 emails_h      = "Write to us"
 emails_lede   = "Public village addresses. No forms, no intermediaries, no data collection — plain email, forwarded through Cloudflare Email Routing."
 copy_label    = "Copy"
-copy_done     = "Copied"
 copy_aria     = "Copy"
 copy_status_ok= "Copied:"
 copy_status_err = "Copy failed. Select and press Ctrl+C."

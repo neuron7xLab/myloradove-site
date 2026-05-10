@@ -37,6 +37,7 @@ Invariants enforced (each must be a hard engineering rule):
   I27  every absolute URL uses the canonical host (no `myloradove`↔`miloradove`
        drift, no stray hosts in OG/sitemap/robots/JSON-LD)
   I28  build is deterministic — rebuilding produces byte-identical dist/
+  I29  locale parity (uk↔en byte-identical key sets) + no orphan keys
 
 The budgets are calibrated to the current asset set — if you change them,
 change this file and document why in MAINTENANCE.md.
@@ -573,6 +574,57 @@ def gate_events_ics_content_type() -> Finding:
     return Finding("I25", ok, "events.ics served with Content-Type: text/calendar")
 
 
+def gate_locale_parity() -> list[Finding]:
+    """Locale TOMLs must declare byte-identical key sets so build.py
+    cannot silently emit a partial English shell when a translator
+    forgets a key. Also surfaces orphan keys (defined but referenced
+    nowhere) so the locales don't silently grow stale strings."""
+    import tomllib as _toml
+    out: list[Finding] = []
+    uk_path = ROOT / "data" / "locale.uk.toml"
+    en_path = ROOT / "data" / "locale.en.toml"
+    if not (uk_path.exists() and en_path.exists()):
+        return [Finding("I29", True, "no locale TOMLs — skipping")]
+    def flat(d: dict, p: str = "") -> set[str]:
+        s: set[str] = set()
+        for k, v in d.items():
+            full = f"{p}.{k}" if p else k
+            if isinstance(v, dict):
+                s |= flat(v, full)
+            else:
+                s.add(full)
+        return s
+    uk = flat(_toml.loads(uk_path.read_text(encoding="utf-8")))
+    en = flat(_toml.loads(en_path.read_text(encoding="utf-8")))
+    sym = uk.symmetric_difference(en)
+    out.append(Finding(
+        "I29a", not sym,
+        f"locale parity (uk↔en): {len(uk)} keys each"
+        + (f", drift={sorted(sym)[:5]}" if sym else ""),
+    ))
+    # Orphan-key sweep: scan HTML/CSS/JS/build.py for references to t.X.y
+    # AND for direct dict-style locale lookups (`t["section"]["key"]` /
+    # `locale["section"]["key"]`). Keys flagged here are not blockers,
+    # but the gate names them so they get cleaned, not accreted.
+    refs: set[str] = set()
+    template_re = re.compile(r"\{\{t\.([\w.]+)\}\}")
+    bracket_re  = re.compile(r"""(?:t|locale)\[["']([\w]+)["']\]\[["']([\w]+)["']\]""")
+    for src in [ROOT/"index.html", ROOT/"build.py", ROOT/"script.js"]:
+        if not src.exists():
+            continue
+        txt = src.read_text(encoding="utf-8")
+        refs |= set(template_re.findall(txt))
+        for sect, key in bracket_re.findall(txt):
+            refs.add(f"{sect}.{key}")
+    orphan_uk = sorted(k for k in uk if k not in refs and "." in k)
+    out.append(Finding(
+        "I29b", not orphan_uk,
+        f"locale orphan-keys (defined, never referenced): {len(orphan_uk)}"
+        + (f"; first 5: {orphan_uk[:5]}" if orphan_uk else ""),
+    ))
+    return out
+
+
 def gate_domain_consistency() -> Finding:
     """Every absolute URL emitted in dist/ must use exactly one host:
     the canonical origin from site.config.json. Catches typos like
@@ -684,6 +736,7 @@ def main() -> int:
         findings.append(gate_email_cards_rendered(html))
         findings.append(gate_events_ics_content_type())
         findings.extend(gate_bilingual_shell())
+        findings.extend(gate_locale_parity())
         findings.append(gate_domain_consistency())
         # Determinism is the most expensive gate; runs last so failures
         # are easy to read even when the rebuild diff is large.
