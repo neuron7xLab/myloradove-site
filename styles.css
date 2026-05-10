@@ -138,6 +138,10 @@
 
     /* reed — wet meadow green */
     --c-reed:       #5a6a3b;
+
+    /* deep emerald — Bawah biophilic accent for surfaces / dividers
+       on the dark side of the cycle. Quiet, organic, expensive. */
+    --c-emerald:    #18342a;
     --c-reed-deep:  #3a4527;
 
     /* water / earth accents */
@@ -156,7 +160,7 @@
     --ff-mono:  ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
 
     --fs-base: clamp(16px, 0.95vw + 12px, 18px);
-    --lh-base: 1.65;
+    --lh-base: 1.72;          /* Bawah-grade reading rhythm */
 
     /* fluid type scale */
     --fs-h1:   clamp(3rem,    4.5vw + 1.8rem, 8.5rem);
@@ -347,9 +351,23 @@
   .chapter {
     max-inline-size: var(--page-w);
     margin-inline: auto;
-    padding-block: var(--sp-l);
+    padding-block: clamp(var(--sp-20), 8vw, var(--sp-32));
     padding-inline: var(--pad-x);
     position: relative;
+  }
+  /* Quiet hairline divider between chapters — Bawah signature.
+     1 px gold-mix at low opacity, 64 px wide, centred above each
+     chapter's head. First chapter (#about) keeps no divider so the
+     hero closes seamlessly. */
+  .chapter + .chapter::before {
+    content: '';
+    display: block;
+    inline-size: 64px;
+    block-size: 1px;
+    background: color-mix(in srgb, var(--c-gold-deep) 70%, transparent);
+    margin-inline: auto;
+    margin-block-end: clamp(var(--sp-12), 4vw, var(--sp-20));
+    opacity: 0.7;
   }
 
   /* content-visibility: auto on sections >1 viewport below the fold.
@@ -661,26 +679,19 @@
   .brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     font-family: var(--ff-serif);
-    font-size: 1.1rem;
-    letter-spacing: 0.01em;
-    /* Base path: cream text + solid drop-shadow works on every hero photo.
-       @supports block below upgrades to the difference-blend effect when
-       the compositor can honour it coherently. */
+    font-size: 1.04rem;
+    letter-spacing: 0.005em;
     color: var(--c-paper);
-    text-shadow: 0 1px 10px color-mix(in srgb, var(--c-ink-deep) 75%, transparent);
+    /* Single soft glow — same restraint as the nav links.
+       Difference-blend dropped: it muddied glyphs against warm sky. */
+    text-shadow: 0 1px 16px color-mix(in srgb, var(--c-ink-deep) 55%, transparent);
     transition: color var(--dur-base) var(--ease-smooth);
-  }
-  @supports (mix-blend-mode: difference) {
-    .brand {
-      mix-blend-mode: difference;
-      text-shadow: none;
-    }
   }
   .nav.is-scrolled .brand {
     color: var(--c-ink);
-    mix-blend-mode: normal;
+    text-shadow: none;
   }
   /* =========  FLAG MARK  =========
      Мінімалістичний SVG-прапор України. Полотно складається з 6 вертикальних
@@ -1714,38 +1725,43 @@
   .foot {
     background: var(--c-ink);
     color: var(--c-paper);
-    padding-block: clamp(56px, 7vw, 96px);
+    padding-block: clamp(80px, 9vw, 128px);
     padding-inline: var(--pad-x);
+    /* Bawah-DNA: gold hairline rule above the footer instead of a hard
+       background break. Reads as the closing line of an editorial
+       page, not a UI seam. */
+    border-block-start: 1px solid color-mix(in srgb, var(--c-gold-deep) 60%, transparent);
   }
   .foot__wrap {
     max-inline-size: var(--page-w);
     margin-inline: auto;
     display: grid;
     grid-template-columns: auto 1fr auto;
-    gap: clamp(24px, 4vw, 72px);
+    gap: clamp(32px, 4vw, 80px);
     align-items: center;
   }
   .foot__brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     font-family: var(--ff-serif);
     font-style: italic;
-    font-size: 1.2rem;
+    font-size: 1.18rem;
+    letter-spacing: 0.005em;
   }
   .foot__brand .brand__mark { inline-size: 34px; block-size: 24px; }
   .foot__text {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    max-inline-size: 60ch;
-    color: color-mix(in srgb, var(--c-paper) 72%, transparent);
+    font-size: 0.86rem;
+    line-height: 1.72;
+    max-inline-size: 56ch;
+    color: color-mix(in srgb, var(--c-paper) 68%, transparent);
   }
   .foot__meta {
-    font-size: 0.82rem;
-    letter-spacing: 0.1em;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     text-align: end;
-    color: color-mix(in srgb, var(--c-paper) 55%, transparent);
+    color: color-mix(in srgb, var(--c-paper) 48%, transparent);
   }
   @media (width <= 720px) {
     .foot__wrap { grid-template-columns: 1fr; }
