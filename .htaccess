@@ -47,14 +47,15 @@ AddCharset UTF-8          .html .css .js .json .svg
 # ---------- Заголовки безпеки ----------
 <IfModule mod_headers.c>
   Header set X-Content-Type-Options        "nosniff"
-  Header set X-Frame-Options               "SAMEORIGIN"
+  Header set X-Frame-Options               "DENY"
   Header set Referrer-Policy               "strict-origin-when-cross-origin"
-  Header set Permissions-Policy            "interest-cohort=(), geolocation=(), camera=(), microphone=()"
+  Header set Permissions-Policy            "interest-cohort=(), geolocation=(), camera=(), microphone=(), accelerometer=(), gyroscope=(), magnetometer=(), payment=(), usb=(), midi=(), fullscreen=(self), autoplay=(), browsing-topics=(), screen-wake-lock=()"
   Header set Strict-Transport-Security     "max-age=31536000; includeSubDomains" env=HTTPS
+  Header set Cross-Origin-Opener-Policy    "same-origin"
+  Header set Cross-Origin-Resource-Policy  "same-origin"
 
   # CSP — все self; inline-SVG favicon через data:, JSON-LD через SHA-256 hash.
-  # Якщо змінюється JSON-LD в index.html — перераховуй хеш:
-  #   echo -n "JSON-LD-content" | openssl dgst -sha256 -binary | base64
+  # build.py перераховує цей хеш при кожному build і синхронізує в _headers і .htaccess.
   Header set Content-Security-Policy \
     "default-src 'self'; \
      img-src 'self' data:; \
@@ -62,7 +63,7 @@ AddCharset UTF-8          .html .css .js .json .svg
      script-src 'self' 'sha256-zQk6C5wYaER3nHyfKoeTBEC/cez4F7OXA1AUOQUomDU='; \
      font-src 'self'; \
      connect-src 'self'; \
-     frame-ancestors 'self'; \
+     frame-ancestors 'none'; \
      base-uri 'self'; \
      form-action 'self'; \
      object-src 'none';"

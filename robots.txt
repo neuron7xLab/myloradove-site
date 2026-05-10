@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://miloradove.com.ua/sitemap.xml
+Sitemap: https://myloradove.com.ua/sitemap.xml

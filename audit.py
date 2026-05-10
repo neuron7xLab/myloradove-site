@@ -34,6 +34,9 @@ Invariants enforced (each must be a hard engineering rule):
   I18  Cache-Control immutable only on fingerprinted/immutable paths
   I19  .htaccess in dist/ has no SPA fallback (no ErrorDocument → index.html)
   I20  no stale manifest.json in dist/images/
+  I27  every absolute URL uses the canonical host (no `myloradove`↔`miloradove`
+       drift, no stray hosts in OG/sitemap/robots/JSON-LD)
+  I28  build is deterministic — rebuilding produces byte-identical dist/
 
 The budgets are calibrated to the current asset set — if you change them,
 change this file and document why in MAINTENANCE.md.
@@ -567,6 +570,74 @@ def gate_events_ics_content_type() -> Finding:
     return Finding("I25", ok, "events.ics served with Content-Type: text/calendar")
 
 
+def gate_domain_consistency() -> Finding:
+    """Every absolute URL emitted in dist/ must use exactly one host:
+    the canonical origin from site.config.json. Catches typos like
+    `miloradove` vs `myloradove` that pass HTML validation but break
+    sitemap discovery, OG previews, and email-routing trust."""
+    cfg = json.loads((ROOT / "site.config.json").read_text(encoding="utf-8"))
+    canonical_host = re.sub(r"^https?://", "", cfg["origin"]).rstrip("/")
+    # Search every text-like artefact in dist/ for hostname-shaped tokens.
+    pattern = re.compile(r"https?://([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})")
+    text_exts = {".html", ".xml", ".txt", ".json", ".css", ".js", ".ics", ""}
+    foreign: dict[str, list[str]] = {}
+    for p in DIST.rglob("*"):
+        if not p.is_file() or p.suffix not in text_exts and p.name not in {"_headers", "_redirects", ".htaccess"}:
+            continue
+        try:
+            txt = p.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+        for host in pattern.findall(txt):
+            # Allow canonical, its www-alias, and well-known external hosts
+            # that are intentional (schema.org, w3.org, sitemaps schema).
+            if host in {canonical_host, f"www.{canonical_host}",
+                        "schema.org", "www.schema.org",
+                        "www.w3.org", "www.sitemaps.org",
+                        "fonts.gstatic.com"}:
+                continue
+            # Anything else that looks like the canonical host but isn't = typo.
+            if canonical_host.split(".")[0][:4] in host or host.endswith(canonical_host.split(".", 1)[1]):
+                foreign.setdefault(p.name, []).append(host)
+    bad = sum(len(v) for v in foreign.values())
+    detail = ", ".join(f"{f}:{','.join(set(h))}" for f, h in foreign.items()) or canonical_host
+    return Finding("I27", bad == 0, f"domain consistency ({canonical_host}): {bad} foreign refs [{detail}]")
+
+
+def gate_build_determinism() -> Finding:
+    """Re-run build.py and confirm every file in dist/ has identical bytes.
+    Build determinism is a load-bearing invariant — non-deterministic
+    output silently invalidates CSP hashes and Cache-Control immutability."""
+    import shutil, tempfile
+    if not (ROOT / "build.py").exists():
+        return Finding("I28", True, "no build.py — skipping")
+    # Snapshot current dist/ hashes
+    before: dict[str, str] = {}
+    for p in DIST.rglob("*"):
+        if p.is_file():
+            before[str(p.relative_to(DIST))] = hashlib.sha256(p.read_bytes()).hexdigest()
+    # Rebuild into a tmp dir to avoid clobbering, then diff
+    with tempfile.TemporaryDirectory() as td:
+        td_path = pathlib.Path(td) / "dist"
+        # Run build.py with DIST overridden via env var if supported,
+        # otherwise rebuild in place and re-hash.
+        result = subprocess.run(
+            [sys.executable, "build.py"],
+            cwd=ROOT, capture_output=True, text=True, timeout=60,
+        )
+        if result.returncode != 0:
+            return Finding("I28", False, f"rebuild failed: {result.stderr[:200]}")
+    after: dict[str, str] = {}
+    for p in DIST.rglob("*"):
+        if p.is_file():
+            after[str(p.relative_to(DIST))] = hashlib.sha256(p.read_bytes()).hexdigest()
+    drift = [k for k in before if before.get(k) != after.get(k)]
+    missing = [k for k in before if k not in after]
+    new = [k for k in after if k not in before]
+    bad = drift + missing + new
+    return Finding("I28", not bad, f"determinism: {len(before)} files, {len(bad)} drift")
+
+
 # ── Main driver ────────────────────────────────────────────────────
 def main() -> int:
     ap = argparse.ArgumentParser()
@@ -610,6 +681,10 @@ def main() -> int:
         findings.append(gate_email_cards_rendered(html))
         findings.append(gate_events_ics_content_type())
         findings.extend(gate_bilingual_shell())
+        findings.append(gate_domain_consistency())
+        # Determinism is the most expensive gate; runs last so failures
+        # are easy to read even when the rebuild diff is large.
+        findings.append(gate_build_determinism())
 
     # Budget gates always run
     findings.append(gate_font_preload_budget(html))

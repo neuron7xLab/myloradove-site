@@ -11,7 +11,9 @@
     "test":        "playwright test",
     "test:update": "playwright test --update-snapshots",
     "lhci":        "lhci autorun --config=lighthouserc.json",
-    "vnu":         "vnu --errors-only --skip-non-html dist/index.html dist/404.html"
+    "lhci:mobile": "lhci autorun --config=lighthouserc.mobile.json",
+    "vnu":         "java -jar node_modules/vnu-jar/build/dist/vnu.jar --errors-only --skip-non-html dist/index.html dist/404.html dist/en/index.html",
+    "ci":          "npm run build && npm run audit && npm run vnu && npm test && npm run lhci"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.0",

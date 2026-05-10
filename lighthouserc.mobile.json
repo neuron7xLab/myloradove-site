@@ -1,0 +1,45 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "dist",
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "perf",
+        "throttlingMethod": "simulate",
+        "screenEmulation": {
+          "mobile": true,
+          "width": 412,
+          "height": 915,
+          "deviceScaleFactor": 1.75,
+          "disabled": false
+        },
+        "skipAudits": ["canonical"]
+      }
+    },
+    "assertMatrix": [
+      {
+        "matchingUrlPattern": ".*/404\\.html$",
+        "assertions": {
+          "categories:performance":   ["error", { "minScore": 0.90 }],
+          "categories:accessibility": ["error", { "minScore": 0.95 }]
+        }
+      },
+      {
+        "matchingUrlPattern": "(?!.*/404\\.html$).*",
+        "assertions": {
+          "categories:performance":   ["error", { "minScore": 0.90 }],
+          "categories:accessibility": ["error", { "minScore": 0.95 }],
+          "first-contentful-paint":   ["error", { "maxNumericValue": 2200 }],
+          "largest-contentful-paint": ["error", { "maxNumericValue": 3500 }],
+          "cumulative-layout-shift":  ["error", { "maxNumericValue": 0.05 }],
+          "total-blocking-time":      ["error", { "maxNumericValue": 250 }],
+          "uses-optimized-images":    ["error", { "maxLength": 0 }],
+          "modern-image-formats":     ["error", { "maxLength": 0 }]
+        }
+      }
+    ],
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
