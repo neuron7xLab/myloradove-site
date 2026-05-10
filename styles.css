@@ -915,6 +915,12 @@
   .hero__slide:nth-of-type(1) { animation-name: hero-c0; opacity: 1; }
   .hero__slide:nth-of-type(2) { animation-name: hero-c1; }
   .hero__slide:nth-of-type(3) { animation-name: hero-c2; }
+  /* Single-slide hero: kill the rotation so the lone slide stays
+     opaque. CSS-only — no JS branching, no DOM checks. */
+  .hero__slide:only-of-type {
+    animation: none;
+    opacity: 1;
+  }
   .hero__slide img {
     inline-size: 100%;
     block-size: 100%;

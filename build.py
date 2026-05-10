@@ -250,7 +250,7 @@ def render_jsonld(
             "@type": "AdministrativeArea",
             "name": cfg["containedIn"],
         },
-        "image": f"{origin}/images/img_4886-1280.webp" if absolute else "images/img_4886-1280.webp",
+        "image": f"{origin}/images/milorado_fields-1184.webp" if absolute else "images/milorado_fields-1184.webp",
     }
     if contacts:
         place["contactPoint"] = [

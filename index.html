@@ -16,9 +16,9 @@
 <meta property="og:locale"      content="{{t.meta.locale}}">
 <meta property="og:title"       content="{{t.meta.og_title}}">
 <meta property="og:description" content="{{t.meta.og_description}}">
-<meta property="og:image"       content="images/img_4886-1280.webp">
-<meta property="og:image:width" content="1280">
-<meta property="og:image:height" content="1707">
+<meta property="og:image"       content="images/milorado_fields-1184.webp">
+<meta property="og:image:width" content="1184">
+<meta property="og:image:height" content="880">
 <meta name="twitter:card"       content="summary_large_image">
 
 {{HREFLANG}}
@@ -36,8 +36,8 @@
 <link rel="preload" as="font" type="font/woff2" href="fonts/inter-cyrillic.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/playfair-italic-cyr.woff2" crossorigin>
 
-<link rel="preload" as="image" type="image/avif" href="images/img_4886-1920.avif"
-      imagesrcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w"
+<link rel="preload" as="image" type="image/avif" href="images/milorado_fields-1184.avif"
+      imagesrcset="images/milorado_fields-640.avif 640w, images/milorado_fields-1184.avif 1184w"
       imagesizes="100vw" fetchpriority="high">
 
 <link rel="stylesheet" href="styles.css">
@@ -104,30 +104,15 @@
 </aside>
 
 <section class="hero" id="top">
-  <!-- 3-slide dusk-narrative carousel:
-         0  pier at sunset            (ground-level, LCP, fetchpriority high)
-         1  pond mirroring the sky    (still water, cloud reflection)
-         2  fields from above         (wide-aerial, sun rays through clouds)
-       Ground → reflection → distance. All three share the same warm
-       evening palette so the cycle reads as a single continuous
-       photographic arc, not three random tiles. Native source widths
-       constrain srcset: 1920w for the iPhone HEIC sources, 1184w max
-       for the drone shot (no upscale → no blur). -->
+  <!-- Single hero photo: milorado_fields — wide aerial, sun rays
+       through clouds, fields stretching to the horizon. The user
+       chose this single frame; no carousel rotation. LCP slot.
+       Native max width 1184; no 1920 variant to avoid upscale-blur. -->
   <div class="hero__carousel" aria-hidden="false">
     <picture class="hero__slide hero__slide--lcp" data-i="0">
-      <source type="image/avif" srcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w" sizes="100vw">
-      <source type="image/webp" srcset="images/img_4886-640.webp 640w, images/img_4886-1280.webp 1280w, images/img_4886-1920.webp 1920w" sizes="100vw">
-      <img src="images/img_4886-1920.webp" alt="{{t.hero.img_alt}}" width="1920" height="2560" fetchpriority="high" decoding="async">
-    </picture>
-    <picture class="hero__slide" data-i="1">
-      <source type="image/avif" srcset="images/img_9210-640.avif 640w, images/img_9210-1280.avif 1280w, images/img_9210-1920.avif 1920w" sizes="100vw">
-      <source type="image/webp" srcset="images/img_9210-640.webp 640w, images/img_9210-1280.webp 1280w, images/img_9210-1920.webp 1920w" sizes="100vw">
-      <img src="images/img_9210-1280.webp" alt="" width="1280" height="1707" loading="lazy" decoding="async" aria-hidden="true">
-    </picture>
-    <picture class="hero__slide" data-i="2">
       <source type="image/avif" srcset="images/milorado_fields-640.avif 640w, images/milorado_fields-1184.avif 1184w" sizes="100vw">
       <source type="image/webp" srcset="images/milorado_fields-640.webp 640w, images/milorado_fields-1184.webp 1184w" sizes="100vw">
-      <img src="images/milorado_fields-1184.webp" alt="" width="1184" height="880" loading="lazy" decoding="async" aria-hidden="true">
+      <img src="images/milorado_fields-1184.webp" alt="{{t.hero.img_alt}}" width="1184" height="880" fetchpriority="high" decoding="async">
     </picture>
   </div>
 
