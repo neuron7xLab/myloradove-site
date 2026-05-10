@@ -135,22 +135,10 @@
   <div class="hero__cursor" aria-hidden="true"></div>
   <div class="hero__grain" aria-hidden="true"></div>
 
-  <div class="hero__top">
-    <span></span>
-    <span>{{t.hero.top_right}}</span>
-  </div>
-
   <!-- Per design call: hero centre stays visually empty; the photo
        carries the page. h1 lives off-screen for a11y/SEO. Class
        hero__title preserved for selector-stable smoke tests. -->
   <h1 class="hero__title sr-only">{{t.hero.title}}</h1>
-
-  <dl class="hero__foot">
-    <div><dt>{{t.hero.stats.founded_k}}</dt><dd>{{t.hero.stats.founded_v}}</dd></div>
-    <div><dt>{{t.hero.stats.residents_k}}</dt><dd>{{t.hero.stats.residents_v}}</dd></div>
-    <div><dt>{{t.hero.stats.elev_k}}</dt><dd>{{t.hero.stats.elev_v}}</dd></div>
-    <div><dt>{{t.hero.stats.comm_k}}</dt><dd>{{t.hero.stats.comm_v}}</dd></div>
-  </dl>
 
   <a class="hero__cue" href="#about" aria-label="{{t.hero.aria_cue}}">
     <svg class="hero__cue-glyph" viewBox="0 0 24 40" aria-hidden="true"
@@ -442,6 +430,18 @@
 </section>
 
 </main>
+
+<!-- Vitals ribbon — single line of typographic facts, sits flush above
+     the footer. Replaces the old in-hero strip; reads as a fine print. -->
+<aside class="vitals" aria-label="{{t.hero.title}}">
+  <dl class="vitals__list">
+    <div class="vitals__item"><dt>{{t.hero.stats.founded_k}}</dt><dd>{{t.hero.stats.founded_v}}</dd></div>
+    <div class="vitals__item"><dt>{{t.hero.stats.residents_k}}</dt><dd>{{t.hero.stats.residents_v}}</dd></div>
+    <div class="vitals__item"><dt>{{t.hero.stats.elev_k}}</dt><dd>{{t.hero.stats.elev_v}}</dd></div>
+    <div class="vitals__item"><dt>{{t.hero.stats.comm_k}}</dt><dd>{{t.hero.stats.comm_v}}</dd></div>
+    <div class="vitals__item vitals__item--coord"><dt>{{t.hero.top_right_k}}</dt><dd>{{t.hero.top_right}}</dd></div>
+  </dl>
+</aside>
 
 <footer class="foot">
   <div class="foot__wrap">

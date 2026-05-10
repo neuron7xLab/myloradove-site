@@ -34,8 +34,9 @@ to_other_label = "Перемкнути на українську"
 other_code     = "UK"
 
 [hero]
-top_left  = "Poltava oblast · Poltava district"
-top_right = "49°49′18″ N · 34°45′33″ E"
+top_left    = "Poltava oblast · Poltava district"
+top_right_k = "Coordinates"
+top_right   = "49°49′18″ N · 34°45′33″ E"
 eyebrow   = "A village above the Kovzhyzha · founded c. 1816"
 title     = "Myloradove"
 img_alt   = "A wooden pier and gazebo over a pond at sunset in Myloradove"

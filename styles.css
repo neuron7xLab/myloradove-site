@@ -1355,7 +1355,7 @@
   .hero__cue {
     position: absolute;
     inset-inline-start: 50%;
-    inset-block-end: 130px;
+    inset-block-end: 56px;
     transform: translateX(-50%);
     display: inline-flex;
     align-items: center;
@@ -1368,7 +1368,7 @@
                 color 240ms cubic-bezier(.22,.61,.36,1);
   }
   @media (width <= 640px) {
-    .hero__cue { inset-block-end: 175px; }
+    .hero__cue { inset-block-end: 64px; }
   }
   .hero__cue:hover,
   .hero__cue:focus-visible {
@@ -2255,6 +2255,70 @@
     transition: border-color var(--dur-fast) var(--ease-smooth);
   }
   .e404__link:hover { border-block-end-color: var(--c-ink); }
+}
+
+/* ---------------------------------------------------------------------
+   VITALS RIBBON — single typographic line above the footer carrying
+   founded · residents · elevation · hromada · coords. Editorial fine
+   print: 0.7 rem, uppercase, letter-spaced, neutral ink-soft colour.
+   --------------------------------------------------------------------- */
+@layer components {
+  .vitals {
+    border-block-start: 1px solid color-mix(in srgb, var(--c-ink-soft) 18%, transparent);
+    padding-block: var(--sp-7);
+    padding-inline: var(--pad-x);
+    color: var(--c-ink-soft);
+    background: color-mix(in srgb, var(--c-paper) 96%, var(--c-paper-warm));
+  }
+  .vitals__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: var(--sp-3) var(--sp-9);
+    max-inline-size: var(--page-w);
+    margin-inline: auto;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .vitals__item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--sp-2);
+  }
+  .vitals__item dt {
+    opacity: 0.55;
+    font-weight: 500;
+  }
+  .vitals__item dt::after {
+    content: '·';
+    margin-inline-start: var(--sp-2);
+    opacity: 0.5;
+  }
+  .vitals__item dd {
+    margin: 0;
+    color: var(--c-ink);
+    font-weight: 500;
+    font-feature-settings: 'tnum';
+  }
+  .vitals__item dd em {
+    font-style: italic;
+    color: var(--c-gold-deep);
+    margin-inline: 0.18em;
+  }
+  .vitals__item dd .unit {
+    margin-inline-start: 0.18em;
+    opacity: 0.6;
+    font-weight: 400;
+  }
+  .vitals__item--coord dd {
+    text-transform: none;
+    letter-spacing: 0.04em;
+  }
+  @media (max-width: 720px) {
+    .vitals__list { gap: var(--sp-3) var(--sp-6); font-size: 0.66rem; }
+  }
 }
 
 /* ---------------------------------------------------------------------
