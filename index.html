@@ -153,8 +153,11 @@
   </dl>
 
   <a class="hero__cue" href="#about" aria-label="{{t.hero.aria_cue}}">
-    <span>{{t.hero.cue}}</span>
-    <span class="hero__cue-line"></span>
+    <svg class="hero__cue-glyph" viewBox="0 0 24 40" aria-hidden="true"
+         focusable="false" width="24" height="40">
+      <line class="hero__cue-axis" x1="12" y1="3" x2="12" y2="28"/>
+      <polyline class="hero__cue-tip" points="5 25, 12 33, 19 25"/>
+    </svg>
   </a>
 </section>
 

@@ -1347,46 +1347,74 @@
     }
   }
 
+  /* ── Hero scroll cue — minimalist symmetrical glyph ────────────────
+     A single SVG: 25 px vertical hairline + 14 px chevron. Symmetric
+     about its vertical axis. Two tween animations: an axis-trace that
+     redraws the line top-to-bottom, and a tip-bob that drops 4 px and
+     fades on a 2.4 s cycle. Pure CSS / SMIL-free. */
   .hero__cue {
     position: absolute;
     inset-inline-start: 50%;
-    /* Sits above the stats row so the vertical line never overlaps values.
-       sp-14 (56px) bottom pad + ~60px row height + sp-6 (24px) clearance. */
-    inset-block-end: 150px;
+    inset-block-end: 130px;
     transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
+    display: inline-flex;
     align-items: center;
-    gap: var(--sp-2);
-    font-size: 0.72rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    opacity: 0.75;
+    justify-content: center;
+    inline-size: 44px;
+    block-size: 56px;
+    border-radius: 999px;
+    color: var(--c-paper);
+    transition: transform 360ms cubic-bezier(.22,.61,.36,1),
+                color 240ms cubic-bezier(.22,.61,.36,1);
   }
   @media (width <= 640px) {
-    .hero__cue { inset-block-end: 190px; }       /* stats stack on mobile → taller */
+    .hero__cue { inset-block-end: 175px; }
   }
-  .hero__cue-line {
-    inline-size: 1px;
-    block-size: 36px;
-    background: currentColor;
-    position: relative;
-    overflow: hidden;
+  .hero__cue:hover,
+  .hero__cue:focus-visible {
+    transform: translateX(-50%) translateY(3px);
+    color: var(--c-gold-soft);
   }
-  .hero__cue-line::after {
-    content: '';
-    position: absolute;
-    inset-block-start: -36px;
-    inset-inline-start: 0;
-    inline-size: 100%;
-    block-size: 100%;
-    background: var(--c-gold);
-    animation: cue-fall 2.8s var(--ease-smooth) infinite;
+  .hero__cue:focus-visible {
+    outline: 1px solid color-mix(in srgb, var(--c-gold) 60%, transparent);
+    outline-offset: 4px;
   }
-  @keyframes cue-fall {
-    0%   { inset-block-start: -36px; }
-    60%  { inset-block-start:  36px; }
-    100% { inset-block-start:  36px; }
+
+  .hero__cue-glyph {
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 1px 2px color-mix(in srgb, var(--c-ink-deep) 60%, transparent))
+            drop-shadow(0 0 14px color-mix(in srgb, var(--c-ink-deep) 35%, transparent));
+  }
+  .hero__cue-axis {
+    /* Stroked line drawn top→bottom, then erased, looping. Uses
+       stroke-dashoffset on the typed @property fallback dasharray. */
+    stroke-dasharray: 25;
+    stroke-dashoffset: 25;
+    animation: cue-axis 2.4s cubic-bezier(.55, .1, .45, .9) infinite;
+  }
+  .hero__cue-tip {
+    transform-origin: 12px 25px;
+    animation: cue-tip 2.4s cubic-bezier(.55, .1, .45, .9) infinite;
+  }
+  @keyframes cue-axis {
+    0%   { stroke-dashoffset:  25; }
+    60%  { stroke-dashoffset:   0; opacity: 1; }
+    100% { stroke-dashoffset: -25; opacity: 0; }
+  }
+  @keyframes cue-tip {
+    0%, 30% { transform: translateY(-6px); opacity: 0; }
+    55%     { transform: translateY( 0);   opacity: 1; }
+    78%     { transform: translateY( 4px); opacity: 1; }
+    100%    { transform: translateY( 8px); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__cue-axis,
+    .hero__cue-tip { animation: none; opacity: 1; stroke-dashoffset: 0; transform: none; }
   }
 
   /* =========  CHAPTER BACKGROUNDS  ========= */
@@ -1909,8 +1937,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1; transform: none; }
-    .hero__media img { animation: none; transform: scale(1.02); }
-    .hero__cue-line::after { animation: none; }
+    .hero__carousel { animation: none; transform: scale(1.02); }
   }
 }
 
