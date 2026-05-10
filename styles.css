@@ -1422,6 +1422,21 @@
   }
   @media (width <= 720px) { .duo { grid-template-columns: 1fr; } }
 
+  /* History lede — editorial intro paragraph between the chapter
+     head and the timeline. Sources note style: small caps, centred,
+     38ch reading column, ink-soft tone. */
+  .history__lede {
+    max-inline-size: 56ch;
+    margin-inline: auto;
+    margin-block: 0 var(--sp-12);
+    text-align: center;
+    font-family: var(--ff-sans);
+    font-size: 0.92rem;
+    line-height: 1.66;
+    color: var(--c-ink-soft);
+    text-wrap: pretty;
+  }
+
   /* =========  TIMELINE  =========
      Symmetric centre-rail: vertical hairline down the middle, gold
      dot per entry, body and year alternate on opposite sides. Both

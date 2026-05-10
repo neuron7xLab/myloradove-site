@@ -65,7 +65,10 @@ MAX_FONT_PRELOADS = 2
 MAX_IMAGE_PRELOADS = 1
 # Per-asset budgets (bytes). Fail if an asset exceeds its class budget.
 BUDGETS = {
-    "html_max":    42 * 1024,   # 2026 stack: scroll-progress + mesh layers
+    "html_max":    45 * 1024,   # expanded canonical history timeline (9 entries
+                                # + lede + sources prose) takes the document
+                                # over the previous 42 KB cap. Gzips well below
+                                # 12 KB; HTTP/2 initial window unaffected.
     "css_max":     80 * 1024,   # 2026 stack: scroll-/view-timeline + chapter-reveal
                                 #             + gradient-mesh + variable-axis title +
                                 #             3D card hover. Budget raised from 65 KB
