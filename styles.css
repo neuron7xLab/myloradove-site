@@ -853,12 +853,18 @@
     isolation: isolate;
   }
 
-  /* ── Hero carousel: 4-slide auto-rotate, CSS-only ─────────────────
-     Each .hero__slide animates opacity in a 28 s loop, staggered by
-     7 s so exactly one slide is visible at any moment with a 0.8 s
-     crossfade. The carousel container itself carries the scroll-driven
-     parallax — slides only swap opacity, the parent transform handles
-     the cinematic zoom-out as the user scrolls. */
+  /* ── Hero carousel: 3-slide auto-rotate, CSS-only ─────────────────
+     Each slide gets ~5 s opaque + 1 s crossfade × 3 = 18 s total loop.
+     Three explicit keyframes keep timing legible; per-slide delays
+     would silently desync if any keyframe stop changed.
+
+     Cycle map (% of 18 s):
+        slide 0 (LCP):    1 ── 1 ── 0 ── 0 ── 1   (active 0–28 %, wrap 95–100 %)
+        slide 1:          0 ── 1 ── 1 ── 0 ── 0   (active 33–61 %)
+        slide 2:          0 ── 0 ── 1 ── 1 ── 0   (active 66–92 %)
+     Adjacent transitions overlap 28-33 / 61-66 / 92-95 / 95-100 %
+     for clean ease-in-out crossfades. The carousel container itself
+     carries the scroll-driven parallax — slides only swap opacity. */
   .hero__carousel {
     position: absolute;
     inset: 0;
@@ -873,16 +879,14 @@
     inset: 0;
     opacity: 0;
     contain: layout paint;
-    animation: hero-carousel 28s ease-in-out infinite;
-    animation-delay: calc(var(--i, 0) * -7s);
+    animation-duration: 18s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
     animation-fill-mode: both;
   }
-  .hero__slide--lcp {
-    /* LCP slide is opaque from the very first frame — fetchpriority is
-       nothing without an opaque <picture> on top of the stack. */
-    opacity: 1;
-    animation-name: hero-carousel-lcp;
-  }
+  .hero__slide:nth-of-type(1) { animation-name: hero-c0; opacity: 1; }
+  .hero__slide:nth-of-type(2) { animation-name: hero-c1; }
+  .hero__slide:nth-of-type(3) { animation-name: hero-c2; }
   .hero__slide img {
     inline-size: 100%;
     block-size: 100%;
@@ -891,17 +895,20 @@
     image-rendering: high-quality;
     image-rendering: smooth;
   }
-  /* 28 s window: opacity rises at ±25 % of the slot (≈ 7 s slot, 0.8 s
-     fade-in on each end). LCP variant boots opaque, then joins the
-     same rhythm starting from t = 0. */
-  @keyframes hero-carousel {
-    0%, 23%, 95%, 100% { opacity: 0; }
-    27%, 73%           { opacity: 1; }
+  @keyframes hero-c0 {
+    0%, 28%   { opacity: 1; }
+    33%, 92%  { opacity: 0; }
+    95%, 100% { opacity: 1; }
   }
-  @keyframes hero-carousel-lcp {
-    0%, 73%   { opacity: 1; }
-    77%, 95%  { opacity: 0; }
-    100%      { opacity: 1; }
+  @keyframes hero-c1 {
+    0%, 28%   { opacity: 0; }
+    33%, 61%  { opacity: 1; }
+    66%, 100% { opacity: 0; }
+  }
+  @keyframes hero-c2 {
+    0%, 61%   { opacity: 0; }
+    66%, 92%  { opacity: 1; }
+    95%, 100% { opacity: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
     .hero__slide                  { animation: none; opacity: 0; }
