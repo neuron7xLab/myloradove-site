@@ -105,14 +105,14 @@
 
 <section class="hero" id="top">
   <!-- 3-slide dusk-narrative carousel:
-         0  pier at sunset       (ground-level, LCP, fetchpriority high)
-         1  village from above   (mid-aerial, sun-rays through clouds)
-         2  fields from above    (wide-aerial, fields and Poltava plain)
-       All three share the same warm late-afternoon/sunset palette so
-       the cycle reads as a single continuous photographic arc, not
-       four random tiles. Native source widths constrain srcset:
-       1920w for 4886 (iPhone HEIC native), 1184w max for the two
-       drone shots (no upscale → no blur). -->
+         0  pier at sunset            (ground-level, LCP, fetchpriority high)
+         1  pond mirroring the sky    (still water, cloud reflection)
+         2  fields from above         (wide-aerial, sun rays through clouds)
+       Ground → reflection → distance. All three share the same warm
+       evening palette so the cycle reads as a single continuous
+       photographic arc, not three random tiles. Native source widths
+       constrain srcset: 1920w for the iPhone HEIC sources, 1184w max
+       for the drone shot (no upscale → no blur). -->
   <div class="hero__carousel" aria-hidden="false">
     <picture class="hero__slide hero__slide--lcp" data-i="0">
       <source type="image/avif" srcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w" sizes="100vw">
@@ -120,9 +120,9 @@
       <img src="images/img_4886-1920.webp" alt="{{t.hero.img_alt}}" width="1920" height="2560" fetchpriority="high" decoding="async">
     </picture>
     <picture class="hero__slide" data-i="1">
-      <source type="image/avif" srcset="images/milorado_aerial-640.avif 640w, images/milorado_aerial-1184.avif 1184w" sizes="100vw">
-      <source type="image/webp" srcset="images/milorado_aerial-640.webp 640w, images/milorado_aerial-1184.webp 1184w" sizes="100vw">
-      <img src="images/milorado_aerial-1184.webp" alt="" width="1184" height="880" loading="lazy" decoding="async" aria-hidden="true">
+      <source type="image/avif" srcset="images/img_9210-640.avif 640w, images/img_9210-1280.avif 1280w, images/img_9210-1920.avif 1920w" sizes="100vw">
+      <source type="image/webp" srcset="images/img_9210-640.webp 640w, images/img_9210-1280.webp 1280w, images/img_9210-1920.webp 1920w" sizes="100vw">
+      <img src="images/img_9210-1280.webp" alt="" width="1280" height="1707" loading="lazy" decoding="async" aria-hidden="true">
     </picture>
     <picture class="hero__slide" data-i="2">
       <source type="image/avif" srcset="images/milorado_fields-640.avif 640w, images/milorado_fields-1184.avif 1184w" sizes="100vw">
