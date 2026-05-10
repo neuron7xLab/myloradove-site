@@ -36,11 +36,12 @@ other_code     = "UK"
 [hero]
 top_left  = "Poltava oblast · Poltava district"
 top_right = "49°49′18″ N · 34°45′33″ E"
-eyebrow   = "A village above the Kovzhyzha"
+eyebrow   = "A village above the Kovzhyzha · founded c. 1816"
 title     = "Myloradove"
 img_alt   = "A wooden pier and gazebo over a pond at sunset in Myloradove"
 sub       = "A quiet village on the left bank of the Kovzhyzha. Here neighbours know each other by name — and will gladly remember yours."
-cue       = "below"
+access    = "75 min from Poltava · 3 h from Kyiv · 1 h off the H&#8209;12 motorway"
+cue       = "Scroll to explore"
 aria_cue  = "Scroll"
 
 [hero.stats]

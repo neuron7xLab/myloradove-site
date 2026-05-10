@@ -96,40 +96,43 @@
 
 <main id="main">
 
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<aside class="chapter-indicator" data-chapter-indicator aria-hidden="true">
+  <span class="chapter-indicator__num"></span>
+  <span class="chapter-indicator__title"></span>
+</aside>
+
 <section class="hero" id="top">
-  <picture class="hero__media">
-    <source type="image/avif" srcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w" sizes="100vw">
-    <source type="image/webp" srcset="images/img_4886-640.webp 640w, images/img_4886-1280.webp 1280w, images/img_4886-1920.webp 1920w" sizes="100vw">
-    <img src="images/img_4886-1280.webp" alt="{{t.hero.img_alt}}" width="1280" height="1707" fetchpriority="high" decoding="async">
-  </picture>
+  <!-- 4-slide auto-rotate carousel: pier (LCP) → meadow → reed-water →
+       village lane. Each slide is a fully responsive <picture>; only
+       the LCP one gets fetchpriority. Crossfade is CSS-only. -->
+  <div class="hero__carousel" aria-hidden="false">
+    <picture class="hero__slide hero__slide--lcp" style="--i:0">
+      <source type="image/avif" srcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w" sizes="100vw">
+      <source type="image/webp" srcset="images/img_4886-640.webp 640w, images/img_4886-1280.webp 1280w, images/img_4886-1920.webp 1920w" sizes="100vw">
+      <img src="images/img_4886-1920.webp" alt="{{t.hero.img_alt}}" width="1920" height="2560" fetchpriority="high" decoding="async">
+    </picture>
+    <picture class="hero__slide" style="--i:1">
+      <source type="image/avif" srcset="images/img_5050-640.avif 640w, images/img_5050-1280.avif 1280w, images/img_5050-1920.avif 1920w" sizes="100vw">
+      <source type="image/webp" srcset="images/img_5050-640.webp 640w, images/img_5050-1280.webp 1280w, images/img_5050-1920.webp 1920w" sizes="100vw">
+      <img src="images/img_5050-1280.webp" alt="" width="1280" height="1707" loading="lazy" decoding="async" aria-hidden="true">
+    </picture>
+    <picture class="hero__slide" style="--i:2">
+      <source type="image/avif" srcset="images/img_9210-640.avif 640w, images/img_9210-1280.avif 1280w, images/img_9210-1920.avif 1920w" sizes="100vw">
+      <source type="image/webp" srcset="images/img_9210-640.webp 640w, images/img_9210-1280.webp 1280w, images/img_9210-1920.webp 1920w" sizes="100vw">
+      <img src="images/img_9210-1280.webp" alt="" width="1280" height="1707" loading="lazy" decoding="async" aria-hidden="true">
+    </picture>
+    <picture class="hero__slide" style="--i:3">
+      <source type="image/avif" srcset="images/img_4689-640.avif 640w, images/img_4689-1280.avif 1280w, images/img_4689-1920.avif 1920w" sizes="100vw">
+      <source type="image/webp" srcset="images/img_4689-640.webp 640w, images/img_4689-1280.webp 1280w, images/img_4689-1920.webp 1920w" sizes="100vw">
+      <img src="images/img_4689-1280.webp" alt="" width="1280" height="1707" loading="lazy" decoding="async" aria-hidden="true">
+    </picture>
+  </div>
 
-  <picture class="hero__water" aria-hidden="true">
-    <source type="image/avif" srcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1920.avif 1920w" sizes="100vw">
-    <source type="image/webp" srcset="images/img_4886-640.webp 640w, images/img_4886-1280.webp 1280w, images/img_4886-1920.webp 1920w" sizes="100vw">
-    <img src="images/img_4886-1280.webp" alt="" width="1280" height="1707" decoding="async">
-  </picture>
-
-  <svg class="hero__filters" aria-hidden="true" focusable="false"
-       width="0" height="0" style="position:absolute">
-    <defs>
-      <filter id="water-ripple" x="-2%" y="-2%" width="104%" height="104%"
-              color-interpolation-filters="sRGB">
-        <feTurbulence type="fractalNoise" baseFrequency="0.008 0.022"
-                      numOctaves="2" seed="7" result="n">
-          <animate attributeName="baseFrequency"
-                   dur="26s" repeatCount="indefinite"
-                   values="0.008 0.022;
-                           0.010 0.028;
-                           0.007 0.020;
-                           0.008 0.022"/>
-        </feTurbulence>
-        <feDisplacementMap in="SourceGraphic" in2="n" scale="0.5"
-                           xChannelSelector="R" yChannelSelector="G"/>
-      </filter>
-    </defs>
-  </svg>
-
+  <div class="hero__mesh" aria-hidden="true"></div>
   <div class="hero__atmos" aria-hidden="true"></div>
+  <div class="hero__cursor" aria-hidden="true"></div>
   <div class="hero__grain" aria-hidden="true"></div>
 
   <div class="hero__top">
@@ -141,6 +144,7 @@
     <p class="eyebrow">{{t.hero.eyebrow}}</p>
     <h1 class="hero__title"><span class="hero__title-word">{{t.hero.title}}</span></h1>
     <p class="hero__sub">{{t.hero.sub}}</p>
+    <p class="hero__access">{{t.hero.access}}</p>
   </div>
 
   <dl class="hero__foot">

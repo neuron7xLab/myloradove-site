@@ -96,10 +96,17 @@
    --------------------------------------------------------------------- */
 @layer reset, tokens, base, layout, components, atmospherics, utilities;
 
-/* Animatable custom properties */
-@property --grain-opacity { syntax: '<number>'; inherits: false; initial-value: 0.38; }
-@property --hero-scale    { syntax: '<number>'; inherits: false; initial-value: 1.03; }
-@property --chroma-shift  { syntax: '<length>'; inherits: false; initial-value: 0px; }
+/* Animatable custom properties — typed so they tween instead of swapping. */
+@property --grain-opacity { syntax: '<number>';     inherits: false; initial-value: 0.08; }
+@property --hero-scale    { syntax: '<number>';     inherits: false; initial-value: 1.0;  }
+@property --chroma-shift  { syntax: '<length>';     inherits: false; initial-value: 0px;  }
+@property --title-wght    { syntax: '<number>';     inherits: false; initial-value: 420;  }
+@property --title-tracking { syntax: '<length>';    inherits: false; initial-value: -0.03em; }
+@property --mesh-x1       { syntax: '<percentage>'; inherits: false; initial-value: 25%;  }
+@property --mesh-y1       { syntax: '<percentage>'; inherits: false; initial-value: 30%;  }
+@property --mesh-x2       { syntax: '<percentage>'; inherits: false; initial-value: 75%;  }
+@property --mesh-y2       { syntax: '<percentage>'; inherits: false; initial-value: 70%;  }
+@property --mesh-hue      { syntax: '<angle>';      inherits: false; initial-value: 0deg; }
 
 /* ---------------------------------------------------------------------
    TOKENS — palette distilled from the actual photographs.
@@ -412,6 +419,32 @@
   }
   .essay__lede b { color: var(--c-ink); font-weight: 500; }
   .essay__lede em { font-style: italic; color: var(--c-gold-deep); }
+  /* Drop cap — editorial signature, applied only to the very first
+     paragraph of each chapter's body (the lede). initial-letter is
+     the modern way (Safari, Chromium 110+); float fallback keeps
+     legacy browsers visually close. */
+  .essay__lede::first-letter {
+    font-family: var(--ff-serif);
+    font-style: italic;
+    color: var(--c-gold-deep);
+    -webkit-initial-letter: 3 2;
+            initial-letter: 3 2;
+    font-weight: 600;
+    margin-inline-end: 0.08em;
+    line-height: 0.85;
+  }
+  /* Float-based fallback for engines without initial-letter support
+     (esp. Firefox). Pulled into a feature-query so modern browsers
+     don't double-paint. */
+  @supports not ((-webkit-initial-letter: 3) or (initial-letter: 3)) {
+    .essay__lede::first-letter {
+      float: inline-start;
+      font-size: 3.4em;
+      line-height: 0.85;
+      padding-block-start: 0.06em;
+      padding-inline-end: 0.08em;
+    }
+  }
 
   /* When the lede sits inside a centered chapter head, it stays centered
      and adopts the head's max-inline-size for optical balance. */
@@ -789,85 +822,108 @@
     isolation: isolate;
   }
 
-  .hero__media {
+  /* ── Hero carousel: 4-slide auto-rotate, CSS-only ─────────────────
+     Each .hero__slide animates opacity in a 28 s loop, staggered by
+     7 s so exactly one slide is visible at any moment with a 0.8 s
+     crossfade. The carousel container itself carries the scroll-driven
+     parallax — slides only swap opacity, the parent transform handles
+     the cinematic zoom-out as the user scrolls. */
+  .hero__carousel {
     position: absolute;
     inset: 0;
     z-index: -3;
     contain: layout paint;
-  }
-  .hero__media img {
-    inline-size: 100%;
-    block-size: 100%;
-    object-fit: cover;
-    object-position: center 55%;
-    /* Crisp render path: explicit GPU layer + integer-stable transform.
-       translateZ(0) promotes to its own compositor layer so the
-       breathe animation runs as a transform-only frame at refresh-rate
-       speed, with the photo rasterised once at full resolution. */
     transform: translateZ(0) scale(var(--hero-scale));
     backface-visibility: hidden;
     will-change: transform;
-    /* Crisp downsampling hint for hi-DPR displays. high-quality is the
-       modern keyword (Chromium 115+, Safari TP); fallback chain stays
-       photographic — never crisp-edges, which would alias on faces. */
-    image-rendering: high-quality;
-    image-rendering: smooth;
-    animation: hero-breathe 32s var(--ease-smooth) infinite alternate;
   }
-
-  /* Water layer — same photograph, duplicated, displaced. Feathered mask
-     hides the seam where static transitions into animated. The SVG
-     filter runs <animate> on its own loop; we only layer and mask. */
-  /* Dual-axis mask: ripple restricted to the bottom-left water region.
-     Intersection of vertical (below horizon) + horizontal (left of pier)
-     gradients leaves gazebo + sky + distant water static. */
-  .hero__water {
+  .hero__slide {
     position: absolute;
     inset: 0;
-    z-index: -3;
-    pointer-events: none;
-    overflow: hidden;
-    --mask-v: linear-gradient(to bottom, transparent 46%, rgba(0,0,0,.35) 52%, rgba(0,0,0,.85) 60%, #000 68%);
-    --mask-h: linear-gradient(to right, #000 0%, #000 30%, rgba(0,0,0,.5) 42%, transparent 56%);
-    -webkit-mask-image: var(--mask-v), var(--mask-h);
-            mask-image: var(--mask-v), var(--mask-h);
-    -webkit-mask-composite: source-in;
-            mask-composite: intersect;
-    filter: url(#water-ripple);
-    /* Paint containment: browser stops propagating repaint outside
-       this element's bounds. Hero subtree gets its own layer. */
+    opacity: 0;
     contain: layout paint;
-    will-change: filter;
+    animation: hero-carousel 28s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -7s);
+    animation-fill-mode: both;
   }
-  .hero__water img {
+  .hero__slide--lcp {
+    /* LCP slide is opaque from the very first frame — fetchpriority is
+       nothing without an opaque <picture> on top of the stack. */
+    opacity: 1;
+    animation-name: hero-carousel-lcp;
+  }
+  .hero__slide img {
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
     object-position: center 55%;
-    /* Perf: skip hero-breathe on the duplicate. Water motion already
-       comes from the SVG displacement filter — stacking a 22s scale
-       animation on top doubles GPU work for zero visible gain. */
-    transform: scale(var(--hero-scale));
+    image-rendering: high-quality;
+    image-rendering: smooth;
+  }
+  /* 28 s window: opacity rises at ±25 % of the slot (≈ 7 s slot, 0.8 s
+     fade-in on each end). LCP variant boots opaque, then joins the
+     same rhythm starting from t = 0. */
+  @keyframes hero-carousel {
+    0%, 23%, 95%, 100% { opacity: 0; }
+    27%, 73%           { opacity: 1; }
+  }
+  @keyframes hero-carousel-lcp {
+    0%, 73%   { opacity: 1; }
+    77%, 95%  { opacity: 0; }
+    100%      { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__slide                  { animation: none; opacity: 0; }
+    .hero__slide--lcp             { opacity: 1; }
   }
 
-  .hero__filters {
+  /* Animated colour-mesh — replaces the SVG displacement layer. Two
+     radial gradients with @property-driven coordinates drift in slow
+     elliptic paths, hue-rotated via P3 colour mixing. Pure GPU, no
+     filter chain, no SourceGraphic resampling — sharp under all zoom. */
+  .hero__mesh {
     position: absolute;
-    inline-size: 0;
-    block-size: 0;
+    inset: 0;
+    z-index: -2;
     pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at var(--mesh-x1) var(--mesh-y1),
+        color-mix(in oklch, oklch(0.78 0.14 calc(85deg + var(--mesh-hue))) 38%, transparent) 0%,
+        transparent 60%),
+      radial-gradient(ellipse 70% 55% at var(--mesh-x2) var(--mesh-y2),
+        color-mix(in oklch, oklch(0.42 0.10 calc(220deg + var(--mesh-hue))) 32%, transparent) 0%,
+        transparent 65%);
+    mix-blend-mode: soft-light;
+    animation:
+      mesh-drift 38s linear infinite,
+      mesh-hue   72s linear infinite;
+    contain: paint;
   }
 
-  /* Perf budget: the SMIL displacement chain is the single most expensive
-     thing on the page. Drop it wherever it won't visibly matter.
-       • reduced-motion    — user preference
-       • reduced-data      — metered connection
-       • ≤ 640 px viewport — phone screens where ripple is <5 px anyway
-     In all three cases we serve the static hero photo as-is. */
+  /* Cursor-tracking ambient light — script.js publishes --mouse-x/y as
+     percentages of the hero rect; this layer renders a soft 600 px halo
+     that follows the pointer. Falls back gracefully when JS is off
+     (initial 50%/50% renders a centred glow). */
+  .hero__cursor {
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(circle 600px at var(--mouse-x) var(--mouse-y),
+      color-mix(in srgb, var(--c-gold-soft) 22%, transparent) 0%,
+      transparent 70%);
+    mix-blend-mode: overlay;
+    transition: background 220ms cubic-bezier(.22,.61,.36,1);
+    contain: paint;
+  }
+
+  /* Drop the heaviest decorations on metered/reduced-motion sessions. */
   @media (prefers-reduced-motion: reduce),
-         (prefers-reduced-data: reduce),
-         (max-width: 640px) {
-    .hero__water,
-    .hero__filters { display: none; }
+         (prefers-reduced-data: reduce) {
+    .hero__mesh   { animation: none; }
+    .hero__cursor { display: none; }
   }
 
   /* Perceptual realism — atmospheric scattering + vignette built from
@@ -922,13 +978,171 @@
     contain: paint;
   }
 
-  /* Range 1.00 → 1.04 (was 1.02 → 1.08). The 6% delta read as motion
-     blur on still photography; halved to a 4% delta over a longer 32 s
-     period — perceived as slow drift, not breath. translateZ(0) above
-     keeps the integer baseline scale(1.0) on its own GPU layer. */
-  @keyframes hero-breathe {
-    from { transform: translateZ(0) scale(1.00); }
-    to   { transform: translateZ(0) scale(1.04); }
+  /* ── 2026 stack: scroll-driven hero parallax ─────────────────────────
+     Replaces the looping breathe keyframe. Photo scales 1.00→1.12 and
+     drifts upward as the user scrolls past the hero, fades opacity at
+     the tail so the next chapter takes over cleanly. Animation runs at
+     compositor refresh rate; the parser only resolves transform. */
+  @supports (animation-timeline: scroll()) {
+    .hero__carousel {
+      animation: hero-parallax linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 100vh;
+    }
+    @keyframes hero-parallax {
+      from { transform: translateZ(0) translateY(0)    scale(1.00); opacity: 1;   }
+      to   { transform: translateZ(0) translateY(-8%)  scale(1.12); opacity: 0.55; }
+    }
+  }
+  /* Fallback for engines without scroll-timeline: slow ambient drift on
+     the carousel container, slides keep their own crossfade animation. */
+  @supports not (animation-timeline: scroll()) {
+    .hero__carousel {
+      animation: hero-breathe 32s var(--ease-smooth) infinite alternate;
+    }
+    @keyframes hero-breathe {
+      from { transform: translateZ(0) scale(1.00); }
+      to   { transform: translateZ(0) scale(1.04); }
+    }
+  }
+
+  /* ── Sticky chapter indicator (top-right floating pill) ─────────────
+     Updated by IntersectionObserver in script.js. Hidden until the
+     hero leaves the viewport, then sticks above the page reading the
+     active chapter's roman number + title in compact monospace. */
+  .chapter-indicator {
+    position: fixed;
+    inset-block-start: var(--sp-6);
+    inset-inline-end: var(--sp-6);
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    padding: var(--sp-3) var(--sp-5);
+    background: color-mix(in srgb, var(--c-paper-warm) 92%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c-gold-deep) 25%, transparent);
+    border-radius: 999px;
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: 0 8px 24px -16px color-mix(in srgb, var(--c-ink-deep) 30%, transparent);
+    font-size: 0.74rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--c-ink);
+    opacity: 0;
+    transform: translateY(-12px);
+    transition:
+      opacity 360ms cubic-bezier(.22,.61,.36,1),
+      transform 360ms cubic-bezier(.22,.61,.36,1);
+    pointer-events: none;
+    z-index: 90;
+  }
+  .chapter-indicator.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .chapter-indicator__num {
+    color: var(--c-gold-deep);
+    font-weight: 600;
+  }
+  .chapter-indicator__title {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    color: var(--c-ink-soft);
+  }
+  @media (max-width: 720px) {
+    .chapter-indicator { display: none; }
+  }
+
+  /* ── Scroll progress indicator (CSS-only, no JS) ─────────────────────
+     Thin gradient line fixed at the top of the viewport. Scales from
+     0 → 1 across the document scroll length via animation-timeline:
+     scroll(root). Pure compositor; never causes layout. */
+  .scroll-progress {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    block-size: 2px;
+    transform-origin: left center;
+    transform: scaleX(0);
+    background: linear-gradient(90deg,
+      var(--c-gold) 0%,
+      var(--c-gold-soft) 50%,
+      var(--c-reed) 100%);
+    z-index: 100;
+    pointer-events: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      animation: scroll-fill linear both;
+      animation-timeline: scroll(root block);
+    }
+    @keyframes scroll-fill {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+  }
+
+  /* ── View-driven chapter reveals ──────────────────────────────────
+     Each chapter title and lede slide up + fade in as they enter the
+     viewport. animation-timeline: view() ties opacity/transform to
+     the element's own visibility band, so reveal is local to scroll
+     position, not page-load time. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .chapter__head,
+      .chapter > .essay,
+      .chapter > .timeline,
+      .chapter > .gallery,
+      .chapter > .duo,
+      .chapter > .events,
+      .chapter > .contacts {
+        animation: chapter-reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% cover 25%;
+      }
+      @keyframes chapter-reveal {
+        from { opacity: 0; transform: translate3d(0, 32px, 0); }
+        to   { opacity: 1; transform: translate3d(0, 0,    0); }
+      }
+    }
+  }
+
+  /* ── Card micro-interactions: 3D tilt + sheen ─────────────────────
+     Email contact cards and gallery tiles get a subtle perspective
+     tilt on hover/focus. Pointer-only — touch devices skip via
+     hover: hover query so there's no stuck-hover state. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .tile a,
+    .contact-card {
+      transition:
+        transform 480ms cubic-bezier(.22, .61, .36, 1),
+        box-shadow 480ms cubic-bezier(.22, .61, .36, 1);
+      transform-origin: center center;
+      will-change: transform;
+    }
+    .tile a:hover,
+    .tile a:focus-visible {
+      transform: perspective(900px) rotateX(2deg) rotateY(-2deg) translateZ(8px) scale(1.015);
+    }
+    .contact-card:hover,
+    .contact-card:focus-within {
+      transform: perspective(1000px) translateY(-3px) scale(1.01);
+      box-shadow: 0 20px 40px -20px color-mix(in srgb, var(--c-ink-deep) 35%, transparent);
+    }
+  }
+
+  /* Mesh layer drift — endless slow elliptic walk through the hero. */
+  @keyframes mesh-drift {
+    0%   { --mesh-x1: 25%; --mesh-y1: 30%; --mesh-x2: 75%; --mesh-y2: 70%; }
+    25%  { --mesh-x1: 65%; --mesh-y1: 20%; --mesh-x2: 30%; --mesh-y2: 80%; }
+    50%  { --mesh-x1: 80%; --mesh-y1: 65%; --mesh-x2: 20%; --mesh-y2: 35%; }
+    75%  { --mesh-x1: 35%; --mesh-y1: 75%; --mesh-x2: 70%; --mesh-y2: 25%; }
+    100% { --mesh-x1: 25%; --mesh-y1: 30%; --mesh-x2: 75%; --mesh-y2: 70%; }
+  }
+  @keyframes mesh-hue {
+    from { --mesh-hue: 0deg;   }
+    to   { --mesh-hue: 360deg; }
   }
 
   .hero__top,
@@ -983,23 +1197,78 @@
 
   .hero__title {
     font-size: var(--fs-h1);
-    font-weight: 400;
     font-style: italic;
     line-height: 0.92;
-    letter-spacing: -0.03em;
     text-wrap: balance;
-    color: var(--c-paper);
-    /* Photoreal subsurface-scattering approximation:
-       three stacked shadows carry luminance from deep ink through to
-       a soft gold halo. Reads well over sky, water, and silhouette. */
-    text-shadow:
-      0 1px 2px  color-mix(in srgb, var(--c-ink-deep) 65%, transparent),
-      0 2px 14px color-mix(in srgb, var(--c-ink-deep) 55%, transparent),
-      0 0 46px   color-mix(in srgb, var(--c-ink-deep) 35%, transparent);
+    /* Variable-font axis driven by typed @property — interpolates
+       between weight 420 (initial) and 720 (post-scroll) without the
+       step you'd get from `font-weight: 400` → `700`. */
+    font-variation-settings: 'wght' var(--title-wght);
+    letter-spacing: var(--title-tracking);
+    /* Liquid-gold gradient text: a 300 %-wide animated background
+       clipped to glyphs. background-position drift is the "shimmer"
+       — purely composited, no per-frame layout. */
+    background: linear-gradient(115deg,
+      var(--c-paper) 25%,
+      color-mix(in oklch, var(--c-gold-soft) 70%, var(--c-paper)) 50%,
+      var(--c-paper) 75%);
+    background-size: 300% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: title-shimmer 7s ease-in-out infinite;
+    /* drop-shadow on the glyph-shaped layer (text-shadow doesn't
+       paint when color: transparent for clipped backgrounds) — gives
+       the same depth without re-introducing opaque fill. */
+    filter:
+      drop-shadow(0 1px 2px  color-mix(in srgb, var(--c-ink-deep) 60%, transparent))
+      drop-shadow(0 2px 14px color-mix(in srgb, var(--c-ink-deep) 50%, transparent));
+  }
+  /* Scroll-driven typographic shift — variable-axis weight + tracking
+     ride the hero view-progress. Engine-only progress; no JS. */
+  @supports (animation-timeline: scroll()) {
+    .hero__title {
+      animation:
+        title-shimmer 7s ease-in-out infinite,
+        title-axis    linear        both;
+      animation-timeline: auto, scroll(root block);
+      animation-range:    auto, 0 60vh;
+    }
+    @keyframes title-axis {
+      from { --title-wght: 420; --title-tracking: -0.030em; }
+      to   { --title-wght: 720; --title-tracking: -0.055em; }
+    }
+  }
+  @keyframes title-shimmer {
+    0%, 100% { background-position: 100% 0; }
+    50%      { background-position:   0% 0; }
   }
   .hero__title-word {
     display: inline-block;
     padding-inline: 0.04em;
+  }
+  /* Letter-stagger reveal on initial load. JS splits the hero word
+     into <span.hero__title-char style="--i:N">, each with a per-index
+     animation-delay. Pure compositor (transform + opacity), runs
+     once via animation-fill-mode: both. */
+  .hero__title-char {
+    display: inline-block;
+    transform: translate3d(0, 1.1em, 0);
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .hero__title-word.is-revealed .hero__title-char {
+    animation: title-letter-in 0.9s cubic-bezier(.22,.61,.36,1) both;
+    animation-delay: calc(var(--i, 0) * 60ms + 200ms);
+  }
+  @keyframes title-letter-in {
+    from { transform: translate3d(0, 1.1em, 0); opacity: 0;     }
+    to   { transform: translate3d(0, 0,     0); opacity: 1;     }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__title-char { transform: none; opacity: 1; }
   }
   .hero__sub {
     max-inline-size: 52ch;
@@ -1009,6 +1278,16 @@
     font-weight: 400;
     text-wrap: pretty;
     text-shadow: 0 1px 12px color-mix(in srgb, var(--c-ink-deep) 70%, transparent);
+  }
+  /* Editorial access line — Bawah-style "75 min from X · 3 h from Y" */
+  .hero__access {
+    margin-block-start: var(--sp-7);          /* 28px */
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.78;
+    text-wrap: balance;
+    text-shadow: 0 1px 8px color-mix(in srgb, var(--c-ink-deep) 70%, transparent);
   }
 
   .hero__top,

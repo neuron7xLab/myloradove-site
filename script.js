@@ -421,4 +421,127 @@
     const el = $('#year');
     if (el) el.textContent = String(new Date().getFullYear());
   });
+
+  /* --- Cursor-tracking ambient light on hero ------------------------
+     Publishes pointer position as CSS variables on .hero. Pointer-only
+     (no touch jitter), throttled to one rAF frame. */
+  safely('cursor-light', () => {
+    const hero = $('.hero');
+    if (!hero) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (matchMedia('(pointer: coarse)').matches) return;
+    let raf = 0;
+    hero.addEventListener('pointermove', (e) => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        const r = hero.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width)  * 100;
+        const y = ((e.clientY - r.top)  / r.height) * 100;
+        hero.style.setProperty('--mouse-x', x.toFixed(1) + '%');
+        hero.style.setProperty('--mouse-y', y.toFixed(1) + '%');
+        raf = 0;
+      });
+    }, { passive: true });
+    hero.addEventListener('pointerleave', () => {
+      hero.style.setProperty('--mouse-x', '50%');
+      hero.style.setProperty('--mouse-y', '50%');
+    });
+  });
+
+  /* --- Sticky chapter indicator (IntersectionObserver) --------------
+     Watches each <section.chapter> and updates a floating pill with
+     the active chapter's number + title. Hidden over the hero. */
+  safely('chapter-indicator', () => {
+    const ind = document.querySelector('[data-chapter-indicator]');
+    if (!ind || !('IntersectionObserver' in window)) return;
+    const numEl   = ind.querySelector('.chapter-indicator__num');
+    const titleEl = ind.querySelector('.chapter-indicator__title');
+    const sections = document.querySelectorAll('section.chapter');
+    if (!sections.length) return;
+    const data = new Map();
+    sections.forEach((s) => {
+      const numNode = s.querySelector('.chapter__num');
+      const titleNode = s.querySelector('.chapter__title');
+      if (!numNode || !titleNode) return;
+      // "I · Село" → ["I", "Село"]
+      const raw = (numNode.textContent || '').trim();
+      const parts = raw.split(/\s+·\s+/);
+      data.set(s, {
+        num: parts[0] || raw,
+        title: (titleNode.textContent || '').trim().replace(/\s+/g, ' '),
+      });
+    });
+    let active = null;
+    const io = new IntersectionObserver((entries) => {
+      // Pick the entry whose top is closest to the upper third of the viewport.
+      const candidates = entries.filter((e) => e.isIntersecting);
+      if (!candidates.length) return;
+      const best = candidates.sort(
+        (a, b) => Math.abs(a.boundingClientRect.top) - Math.abs(b.boundingClientRect.top)
+      )[0];
+      const meta = data.get(best.target);
+      if (!meta || meta === active) return;
+      active = meta;
+      numEl.textContent = meta.num;
+      titleEl.textContent = meta.title;
+      ind.classList.add('is-visible');
+    }, { rootMargin: '-30% 0px -55% 0px', threshold: 0 });
+    sections.forEach((s) => io.observe(s));
+    // Hide indicator when the hero is back in view.
+    const hero = $('.hero');
+    if (hero) {
+      const heroIO = new IntersectionObserver(([e]) => {
+        ind.classList.toggle('is-visible', !e.isIntersecting && active !== null);
+      }, { threshold: 0.4 });
+      heroIO.observe(hero);
+    }
+  });
+
+  /* --- Hero title letter-stagger reveal on initial load -------------
+     Splits .hero__title into char spans on load, each gets --i index;
+     CSS handles the actual translateY+opacity in via per-span delay.
+     One-shot — runs only on first paint. */
+  safely('title-reveal', () => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const word = document.querySelector('.hero__title-word');
+    if (!word) return;
+    const text = word.textContent || '';
+    if (!text.trim()) return;
+    const frag = document.createDocumentFragment();
+    [...text].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'hero__title-char';
+      span.style.setProperty('--i', String(i));
+      span.textContent = ch;
+      // Preserve word breaks for screen readers — ZWSP between chars
+      // would defeat selection. We keep plain chars; aria-label
+      // continues to read the original text from the parent.
+      frag.appendChild(span);
+    });
+    word.setAttribute('aria-label', text);
+    word.textContent = '';
+    word.appendChild(frag);
+    word.classList.add('is-revealed');
+  });
+
+  /* --- View Transitions for in-page anchor jumps --------------------
+     Native View Transitions API. Wraps same-document scroll in a
+     startViewTransition so navigation crossfades. Falls back silently. */
+  safely('view-transitions', () => {
+    if (!document.startViewTransition) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+      const href = link.getAttribute('href');
+      if (!href || href === '#') return;
+      const target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault();
+      document.startViewTransition(() => {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', href);
+      });
+    });
+  });
 })();

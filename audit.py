@@ -64,9 +64,12 @@ MAX_FONT_PRELOADS = 2
 MAX_IMAGE_PRELOADS = 1
 # Per-asset budgets (bytes). Fail if an asset exceeds its class budget.
 BUDGETS = {
-    "html_max":    40 * 1024,
-    "css_max":     65 * 1024,   # grew for bilingual shell + events + contacts + perf
-    "js_max":      20 * 1024,
+    "html_max":    42 * 1024,   # 2026 stack: scroll-progress + mesh layers
+    "css_max":     80 * 1024,   # 2026 stack: scroll-/view-timeline + chapter-reveal
+                                #             + gradient-mesh + variable-axis title +
+                                #             3D card hover. Budget raised from 65 KB
+                                #             after measuring; still gzips to <14 KB.
+    "js_max":      22 * 1024,   # 2026 stack: cursor-light + View Transitions
     "img_640":    300 * 1024,   # thumbnails / gallery previews
     "img_1280":   800 * 1024,   # article plate default
     "img_1920": 1_500 * 1024,   # lightbox / high-DPR
