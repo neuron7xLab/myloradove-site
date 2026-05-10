@@ -516,29 +516,31 @@
      Показує прапор ІНШОЇ мови + двобуквений код — клац перемикає сторінку. */
   .lang-switch {
     position: fixed;
-    /* Match nav padding-block exactly so both sit on the same baseline.
-       Nav default is 18px; scrolled is 12px — mirrored in CSS below. */
     inset-block-start: 18px;
     inset-inline-end: var(--pad-x);
-    z-index: 120;                 /* above nav (100) + progress (101) */
+    z-index: 120;
+    isolation: isolate;
 
     display: inline-flex;
     align-items: center;
-    gap: var(--sp-2);              /* 8px */
-    padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-2);   /* 8 12 8 8 */
-    block-size: 32px;              /* match nav logo mark height */
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-4) var(--sp-2) var(--sp-2);
+    block-size: 36px;
 
     font-family: var(--ff-sans);
-    font-size: 0.75rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
 
     color: var(--c-paper);
-    background: color-mix(in srgb, var(--c-ink-deep) 22%, transparent);
-    border: 1px solid color-mix(in srgb, var(--c-paper) 28%, transparent);
+    background: color-mix(in srgb, var(--c-ink-deep) 28%, transparent);
+    border: 1px solid color-mix(in srgb, var(--c-paper) 32%, transparent);
     border-radius: 999px;
-    backdrop-filter: saturate(140%) blur(8px);
-    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    backdrop-filter: saturate(160%) blur(16px);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    box-shadow:
+      0 1px 0 inset color-mix(in srgb, var(--c-paper) 18%, transparent),
+      0 8px 24px -12px color-mix(in srgb, var(--c-ink-deep) 60%, transparent);
 
     transition:
       background var(--dur-base) var(--ease-smooth),
@@ -546,12 +548,47 @@
       color var(--dur-base) var(--ease-smooth),
       transform var(--dur-base) var(--ease-smooth),
       padding var(--dur-base) var(--ease-smooth),
+      box-shadow var(--dur-base) var(--ease-smooth),
       inset-block-start var(--dur-base) var(--ease-smooth);
   }
+  /* Conic gold sheen rotating behind the capsule on hover.
+     Sits on the ::before pseudo as a gradient mask — capsule body
+     stays glass, only the rim picks up moving gold. */
+  .lang-switch::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from 0deg,
+      transparent 0deg,
+      color-mix(in oklch, var(--c-gold) 80%, transparent) 90deg,
+      transparent 180deg,
+      color-mix(in oklch, var(--c-gold-soft) 70%, transparent) 270deg,
+      transparent 360deg);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-smooth);
+    pointer-events: none;
+    z-index: -1;
+  }
   .lang-switch:hover {
-    background: color-mix(in srgb, var(--c-ink-deep) 45%, transparent);
-    border-color: color-mix(in srgb, var(--c-gold) 55%, transparent);
+    background: color-mix(in srgb, var(--c-ink-deep) 50%, transparent);
+    border-color: color-mix(in srgb, var(--c-gold) 60%, transparent);
     transform: translateY(-1px);
+    box-shadow:
+      0 1px 0 inset color-mix(in srgb, var(--c-paper) 28%, transparent),
+      0 12px 30px -12px color-mix(in srgb, var(--c-gold-deep) 55%, transparent);
+  }
+  .lang-switch:hover::before {
+    opacity: 1;
+    animation: lang-rim 4.5s linear infinite;
+  }
+  @keyframes lang-rim {
+    to { transform: rotate(360deg); }
   }
   .lang-switch:active { transform: translateY(0); }
 
@@ -766,50 +803,69 @@
     display: flex;
     /* 8 nav items + flag-badge need to breathe on 1024-1440 viewports. */
     gap: clamp(var(--sp-5), 2vw, var(--sp-8));   /* 20 → 32 */
-    font-size: 0.95rem;
+    font-size: 0.98rem;
+    /* Bumped to 520 for clean readability on warm dusk hero;
+       defaults from var(--ff-sans) at 400 read as washed out
+       once stacked over an 80%-luminance sky region. */
+    font-weight: 520;
+    letter-spacing: 0.01em;
     color: var(--c-paper);
-    text-shadow: 0 1px 10px color-mix(in srgb, var(--c-ink-deep) 75%, transparent);
-    /* Reserve space for the fixed .lang-switch badge in the top-right. */
+    /* Two-stop shadow: a tight dark plate under each glyph for
+       contrast plus a wider soft shadow for separation from the
+       bright sky tile. mix-blend-mode: difference WAS dimming
+       glyphs to muddy-blue against warm sunset tiles — dropped. */
+    text-shadow:
+      0 1px 1px  color-mix(in srgb, var(--c-ink-deep) 92%, transparent),
+      0 2px 16px color-mix(in srgb, var(--c-ink-deep) 70%, transparent);
     padding-inline-end: 82px;
   }
   @media (width <= 1024px) and (width > 860px) {
     /* Tight fit on small-desktop: drop gap, slightly smaller type. */
-    .nav__menu { gap: var(--sp-4); font-size: 0.88rem; }
-  }
-  @supports (mix-blend-mode: difference) {
-    .nav__menu {
-      mix-blend-mode: difference;
-      text-shadow: none;
-    }
+    .nav__menu { gap: var(--sp-4); font-size: 0.9rem; }
   }
   .nav.is-scrolled .nav__menu {
     color: var(--c-ink);
-    mix-blend-mode: normal;
+    text-shadow: none;
   }
   .nav__menu a {
     position: relative;
     padding-block: 4px;
-    transition: opacity var(--dur-fast) var(--ease-smooth);
+    transition:
+      color var(--dur-fast) var(--ease-smooth),
+      letter-spacing var(--dur-base) var(--ease-smooth);
   }
+  /* 2-stop gradient bar that ripples open from the centre on hover —
+     gold→paper→reed reads as illuminated metal across any backdrop. */
   .nav__menu a::after {
     content: '';
     position: absolute;
-    inset-block-end: -2px;
+    inset-block-end: -3px;
     inset-inline-start: 50%;
     inset-inline-end:   50%;
-    block-size: 1px;
-    background: currentColor;
+    block-size: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg,
+      var(--c-gold-soft) 0%,
+      var(--c-paper)     50%,
+      var(--c-gold-deep) 100%);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--c-gold) 65%, transparent);
     transition:
       inset-inline-start var(--dur-base) var(--ease-out),
-      inset-inline-end   var(--dur-base) var(--ease-out);
+      inset-inline-end   var(--dur-base) var(--ease-out),
+      box-shadow         var(--dur-base) var(--ease-out);
+  }
+  .nav__menu a:hover,
+  .nav__menu a:focus-visible {
+    letter-spacing: 0.02em;
   }
   .nav__menu a:hover::after,
+  .nav__menu a:focus-visible::after,
   .nav__menu a[aria-current='true']::after {
     inset-inline-start: 0;
     inset-inline-end:   0;
   }
   .nav__menu a[aria-current='true'] {
-    color: var(--c-gold);
+    color: color-mix(in oklch, var(--c-gold) 70%, var(--c-paper));
   }
   .nav.is-scrolled .nav__menu a[aria-current='true'] {
     color: var(--c-gold-deep);
@@ -1015,20 +1071,24 @@
        (4) radial falloff focuses perceptual attention on the centre */
     background:
       linear-gradient(180deg,
-        color-mix(in srgb, var(--c-ink-deep) 55%, transparent) 0%,
-        color-mix(in srgb, var(--c-ink-deep) 12%, transparent) 22%,
-        transparent 38%),
+        color-mix(in srgb, var(--c-ink-deep) 58%, transparent) 0%,
+        color-mix(in srgb, var(--c-ink-deep) 14%, transparent) 22%,
+        transparent 40%),
       linear-gradient(90deg,
-        color-mix(in srgb, var(--c-ink-deep) 40%, transparent) 0%,
-        color-mix(in srgb, var(--c-ink-deep) 14%, transparent) 32%,
+        color-mix(in srgb, var(--c-ink-deep) 38%, transparent) 0%,
+        color-mix(in srgb, var(--c-ink-deep) 12%, transparent) 30%,
         transparent 55%),
       linear-gradient(0deg,
-        color-mix(in srgb, var(--c-ink-deep) 62%, transparent) 0%,
-        color-mix(in srgb, var(--c-ink-deep) 18%, transparent) 18%,
-        transparent 36%),
-      radial-gradient(ellipse 90% 70% at 50% 55%,
-        transparent 60%,
-        color-mix(in srgb, var(--c-ink-deep) 22%, transparent) 100%);
+        color-mix(in srgb, var(--c-ink-deep) 80%, transparent) 0%,
+        color-mix(in srgb, var(--c-ink-deep) 38%, transparent) 12%,
+        color-mix(in srgb, var(--c-ink-deep) 10%, transparent) 26%,
+        transparent 44%),
+      radial-gradient(ellipse 95% 70% at 50% 55%,
+        transparent 55%,
+        color-mix(in srgb, var(--c-ink-deep) 30%, transparent) 100%),
+      radial-gradient(ellipse 70% 18% at 50% 92%,
+        color-mix(in srgb, var(--c-gold-soft) 9%, transparent) 0%,
+        transparent 70%);
     pointer-events: none;
     contain: paint;
   }
