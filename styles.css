@@ -801,27 +801,19 @@
 
   .nav__menu {
     display: flex;
-    /* 8 nav items + flag-badge need to breathe on 1024-1440 viewports. */
-    gap: clamp(var(--sp-5), 2vw, var(--sp-8));   /* 20 → 32 */
-    font-size: 0.98rem;
-    /* Bumped to 520 for clean readability on warm dusk hero;
-       defaults from var(--ff-sans) at 400 read as washed out
-       once stacked over an 80%-luminance sky region. */
-    font-weight: 520;
-    letter-spacing: 0.01em;
+    gap: clamp(var(--sp-5), 2vw, var(--sp-8));
+    /* Anthropic / Linear / Vercel pattern: clean light sans, regular
+       weight, subtle separation from photo via a single soft dark
+       glow — never a heavy plate, never bold. Crisp, not loud. */
+    font-size: 0.94rem;
+    font-weight: 400;
+    letter-spacing: 0.005em;
     color: var(--c-paper);
-    /* Two-stop shadow: a tight dark plate under each glyph for
-       contrast plus a wider soft shadow for separation from the
-       bright sky tile. mix-blend-mode: difference WAS dimming
-       glyphs to muddy-blue against warm sunset tiles — dropped. */
-    text-shadow:
-      0 1px 1px  color-mix(in srgb, var(--c-ink-deep) 92%, transparent),
-      0 2px 16px color-mix(in srgb, var(--c-ink-deep) 70%, transparent);
+    text-shadow: 0 1px 18px color-mix(in srgb, var(--c-ink-deep) 60%, transparent);
     padding-inline-end: 82px;
   }
   @media (width <= 1024px) and (width > 860px) {
-    /* Tight fit on small-desktop: drop gap, slightly smaller type. */
-    .nav__menu { gap: var(--sp-4); font-size: 0.9rem; }
+    .nav__menu { gap: var(--sp-4); font-size: 0.88rem; }
   }
   .nav.is-scrolled .nav__menu {
     color: var(--c-ink);
@@ -856,7 +848,7 @@
   }
   .nav__menu a:hover,
   .nav__menu a:focus-visible {
-    letter-spacing: 0.02em;
+    color: color-mix(in oklch, var(--c-paper) 95%, var(--c-gold-soft));
   }
   .nav__menu a:hover::after,
   .nav__menu a:focus-visible::after,
