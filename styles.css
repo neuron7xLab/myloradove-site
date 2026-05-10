@@ -1417,76 +1417,115 @@
   }
   @media (width <= 720px) { .duo { grid-template-columns: 1fr; } }
 
-  /* =========  TIMELINE  ========= */
-  /* ── Timeline — precisely-aligned 2-column grid (year | body)
-     Golden dot centred on the rail; dot y-coord matches the year
-     baseline. Tight 4pt rhythm: 56px between items on desktop. */
+  /* =========  TIMELINE  =========
+     Symmetric centre-rail: vertical hairline down the middle, gold
+     dot per entry, body and year alternate on opposite sides. Both
+     columns of equal width — visually balanced about the axis. */
   .timeline {
-    max-inline-size: 760px;
+    max-inline-size: 1080px;
     margin-inline: auto;
     position: relative;
-    padding-inline-start: var(--sp-16);
+    padding-block-start: var(--sp-3);
     list-style: none;
   }
+  /* The rail. 1 px gold-deep mix at low opacity, full height of <ol>. */
   .timeline::before {
     content: '';
     position: absolute;
-    inset-inline-start: var(--sp-3);              /* 12px — centred under dots */
+    inset-inline-start: 50%;
     inset-block: var(--sp-2) var(--sp-2);
     inline-size: 1px;
-    background: var(--c-line);
+    background: color-mix(in srgb, var(--c-gold-deep) 45%, transparent);
+    transform: translateX(-50%);
   }
   .timeline > li {
     position: relative;
-    padding-block-end: var(--sp-14);               /* 56px — rhythm */
+    /* Three columns: left half | rail gutter | right half. The rail
+       gutter is fixed at 96 px so the gold dot sits in clear air,
+       independent of viewport width. */
     display: grid;
-    grid-template-columns: 140px 1fr;
-    column-gap: var(--sp-8);                        /* 32px */
+    grid-template-columns: 1fr 96px 1fr;
+    column-gap: var(--sp-4);
     align-items: baseline;
+    padding-block: var(--sp-10);
   }
-  .timeline > li:last-child { padding-block-end: 0; }
-  .timeline > li::before {
+  .timeline > li:first-child { padding-block-start: 0; }
+  .timeline > li:last-child  { padding-block-end:   0; }
+  /* Centred dot. Anchored to the rail at the row's baseline. */
+  .timeline > li::after {
     content: '';
     position: absolute;
-    /* Dot anchored to the rail. Centre: sp-3 (rail-x) minus dot-radius (5). */
-    inset-inline-start: calc(var(--sp-3) - var(--sp-16) - 4.5px);
-    inset-block-start: 0.5em;                       /* baseline-aligned with year */
-    inline-size: 10px;
-    block-size: 10px;
+    inset-inline-start: 50%;
+    inset-block-start: calc(var(--sp-10) + 0.45em);
+    inline-size: 12px;
+    block-size: 12px;
     border-radius: 50%;
     background: var(--c-gold);
+    transform: translate(-50%, 0);
     box-shadow:
-      0 0 0 4px var(--c-paper),
-      0 0 12px color-mix(in srgb, var(--c-gold) 45%, transparent);
+      0 0 0 5px var(--c-paper),
+      0 0 14px color-mix(in srgb, var(--c-gold) 50%, transparent);
   }
+  .timeline > li:first-child::after { inset-block-start: 0.45em; }
+
   .timeline__year {
     font-family: var(--ff-serif);
     font-style: italic;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     color: var(--c-gold-deep);
     font-feature-settings: 'tnum';
+    align-self: baseline;
   }
   .timeline__body h3 {
-    font-size: 1.3rem;
-    line-height: 1.15;
+    font-size: 1.32rem;
+    line-height: 1.18;
     margin-block-end: var(--sp-2);
   }
   .timeline__body p {
     font-size: 0.98rem;
     color: var(--c-ink-soft);
-    line-height: 1.65;
+    line-height: 1.7;
+    max-inline-size: 38ch;
   }
-  @media (width <= 600px) {
+
+  /* Odd rows: body on the LEFT (right-aligned), year on the RIGHT.
+     Even rows: year on the LEFT (right-aligned), body on the RIGHT. */
+  .timeline > li:nth-child(odd) .timeline__body  { grid-column: 1; text-align: end;   justify-self: end;   }
+  .timeline > li:nth-child(odd) .timeline__year  { grid-column: 3; text-align: start; justify-self: start; }
+  .timeline > li:nth-child(even) .timeline__year { grid-column: 1; text-align: end;   justify-self: end;   }
+  .timeline > li:nth-child(even) .timeline__body { grid-column: 3; text-align: start; justify-self: start; }
+
+  /* On narrow viewports (≤ 720 px) the alternating pattern collapses
+     to a left-rail single column — preserves chronology, eliminates
+     awkward 50 px-wide reading columns. */
+  @media (width <= 720px) {
+    .timeline { padding-inline-start: 28px; max-inline-size: 100%; }
+    .timeline::before {
+      inset-inline-start: 6px;
+      transform: none;
+    }
     .timeline > li {
       grid-template-columns: 1fr;
-      column-gap: 0;
-      padding-block-end: var(--sp-10);
+      padding-block: var(--sp-8);
+    }
+    .timeline > li::after {
+      inset-inline-start: 6px;
+      transform: translate(-50%, 0);
+    }
+    .timeline > li:nth-child(odd)  .timeline__body,
+    .timeline > li:nth-child(even) .timeline__body,
+    .timeline > li:nth-child(odd)  .timeline__year,
+    .timeline > li:nth-child(even) .timeline__year {
+      grid-column: 1;
+      text-align: start;
+      justify-self: start;
     }
     .timeline__year {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       margin-block-end: var(--sp-2);
       display: block;
     }
+    .timeline__body p { max-inline-size: none; }
   }
 
   /* =========  CULTURE (two-up spread)  ========= */
