@@ -800,8 +800,19 @@
     block-size: 100%;
     object-fit: cover;
     object-position: center 55%;
-    transform: scale(var(--hero-scale));
-    animation: hero-breathe 22s var(--ease-smooth) infinite alternate;
+    /* Crisp render path: explicit GPU layer + integer-stable transform.
+       translateZ(0) promotes to its own compositor layer so the
+       breathe animation runs as a transform-only frame at refresh-rate
+       speed, with the photo rasterised once at full resolution. */
+    transform: translateZ(0) scale(var(--hero-scale));
+    backface-visibility: hidden;
+    will-change: transform;
+    /* Crisp downsampling hint for hi-DPR displays. high-quality is the
+       modern keyword (Chromium 115+, Safari TP); fallback chain stays
+       photographic — never crisp-edges, which would alias on faces. */
+    image-rendering: high-quality;
+    image-rendering: smooth;
+    animation: hero-breathe 32s var(--ease-smooth) infinite alternate;
   }
 
   /* Water layer — same photograph, duplicated, displaced. Feathered mask
@@ -865,33 +876,38 @@
     position: absolute;
     inset: 0;
     z-index: -2;
-    /* Multi-layer atmospheric compositing:
+    /* Multi-layer atmospheric compositing — calibrated to preserve
+       photographic detail. Each linear-gradient has been pulled back
+       (top 72→55, left 55→40, bottom 78→62) to keep the mid-frame
+       photo readable while still anchoring text contrast against
+       worst-case sky/water colour.
        (1) upper mask keeps the nav + eyebrow readable over any sky
        (2) left column wash protects the display title + subtitle
        (3) lower mask anchors the stats row
        (4) radial falloff focuses perceptual attention on the centre */
     background:
       linear-gradient(180deg,
-        color-mix(in srgb, var(--c-ink-deep) 72%, transparent) 0%,
-        color-mix(in srgb, var(--c-ink-deep) 18%, transparent) 22%,
-        transparent 40%),
-      linear-gradient(90deg,
         color-mix(in srgb, var(--c-ink-deep) 55%, transparent) 0%,
-        color-mix(in srgb, var(--c-ink-deep) 20%, transparent) 35%,
-        transparent 60%),
+        color-mix(in srgb, var(--c-ink-deep) 12%, transparent) 22%,
+        transparent 38%),
+      linear-gradient(90deg,
+        color-mix(in srgb, var(--c-ink-deep) 40%, transparent) 0%,
+        color-mix(in srgb, var(--c-ink-deep) 14%, transparent) 32%,
+        transparent 55%),
       linear-gradient(0deg,
-        color-mix(in srgb, var(--c-ink-deep) 78%, transparent) 0%,
-        color-mix(in srgb, var(--c-ink-deep) 25%, transparent) 20%,
-        transparent 40%),
-      radial-gradient(ellipse 80% 60% at 50% 55%,
-        transparent 55%,
-        color-mix(in srgb, var(--c-ink-deep) 30%, transparent) 100%);
+        color-mix(in srgb, var(--c-ink-deep) 62%, transparent) 0%,
+        color-mix(in srgb, var(--c-ink-deep) 18%, transparent) 18%,
+        transparent 36%),
+      radial-gradient(ellipse 90% 70% at 50% 55%,
+        transparent 60%,
+        color-mix(in srgb, var(--c-ink-deep) 22%, transparent) 100%);
     pointer-events: none;
     contain: paint;
   }
 
   /* Micro-geometry: procedural film-grain texture, normalized to sRGB.
-     Screen blend keeps highlights unaffected — mimics ISO noise in shadows. */
+     Editorial calibration: opacity 0.08 reads as ISO 400, not ISO 1600.
+     Heavier grain (was 0.18) bled detail out of the photo's midtones. */
   .hero__grain {
     /* Perf: mix-blend-mode: overlay on a 100svh surface forced the
        compositor to re-blend on every animation tick below. Dropped in
@@ -901,14 +917,18 @@
     inset: 0;
     z-index: -1;
     background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0   0 0 0 0 0   0 0 0 0 0   0 0 0 .38 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-    opacity: 0.18;
+    opacity: 0.08;
     pointer-events: none;
     contain: paint;
   }
 
+  /* Range 1.00 → 1.04 (was 1.02 → 1.08). The 6% delta read as motion
+     blur on still photography; halved to a 4% delta over a longer 32 s
+     period — perceived as slow drift, not breath. translateZ(0) above
+     keeps the integer baseline scale(1.0) on its own GPU layer. */
   @keyframes hero-breathe {
-    from { transform: scale(1.02); }
-    to   { transform: scale(1.08); }
+    from { transform: translateZ(0) scale(1.00); }
+    to   { transform: translateZ(0) scale(1.04); }
   }
 
   .hero__top,
