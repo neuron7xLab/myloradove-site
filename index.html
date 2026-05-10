@@ -140,12 +140,10 @@
     <span>{{t.hero.top_right}}</span>
   </div>
 
-  <div class="hero__body">
-    <p class="eyebrow">{{t.hero.eyebrow}}</p>
-    <h1 class="hero__title"><span class="hero__title-word">{{t.hero.title}}</span></h1>
-    <p class="hero__sub">{{t.hero.sub}}</p>
-    <p class="hero__access">{{t.hero.access}}</p>
-  </div>
+  <!-- Per design call: hero centre stays visually empty; the photo
+       carries the page. h1 lives off-screen for a11y/SEO. Class
+       hero__title preserved for selector-stable smoke tests. -->
+  <h1 class="hero__title sr-only">{{t.hero.title}}</h1>
 
   <dl class="hero__foot">
     <div><dt>{{t.hero.stats.founded_k}}</dt><dd>{{t.hero.stats.founded_v}}</dd></div>

@@ -497,34 +497,7 @@
     }
   });
 
-  /* --- Hero title letter-stagger reveal on initial load -------------
-     Splits .hero__title into char spans on load, each gets --i index;
-     CSS handles the actual translateY+opacity in via per-span delay.
-     One-shot — runs only on first paint. */
-  safely('title-reveal', () => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const word = document.querySelector('.hero__title-word');
-    if (!word) return;
-    const text = word.textContent || '';
-    if (!text.trim()) return;
-    const frag = document.createDocumentFragment();
-    [...text].forEach((ch, i) => {
-      const span = document.createElement('span');
-      span.className = 'hero__title-char';
-      span.style.setProperty('--i', String(i));
-      span.textContent = ch;
-      // Preserve word breaks for screen readers — ZWSP between chars
-      // would defeat selection. We keep plain chars; aria-label
-      // continues to read the original text from the parent.
-      frag.appendChild(span);
-    });
-    word.setAttribute('aria-label', text);
-    word.textContent = '';
-    word.appendChild(frag);
-    word.classList.add('is-revealed');
-  });
-
-  /* --- View Transitions for in-page anchor jumps --------------------
+/* --- View Transitions for in-page anchor jumps --------------------
      Native View Transitions API. Wraps same-document scroll in a
      startViewTransition so navigation crossfades. Falls back silently. */
   safely('view-transitions', () => {
