@@ -219,20 +219,16 @@
     }
   }
 
-  /* WSE §17 — dark-mode palette. The hero is photo-driven (always
-     warm-paper + ink overlay regardless), so we only flip the
-     editorial body surfaces below the fold: vitals strip, footer,
-     contact cards, code/table/quote backgrounds. Everything else
-     reads from --c-ink/paper which already work on either scheme. */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --c-paper:      #11181d;
-      --c-paper-warm: #161e23;
-      --c-paper-cool: #0e1418;
-      --c-ink:        #ece5d3;
-      --c-ink-soft:   #b6b1a2;
-    }
-  }
+  /* WSE §17 dark-mode palette removed (was flipping --c-ink), which
+     broke six explicitly-dark surfaces: .foot, .chapter--life,
+     .nav__menu (mobile drawer), .tile (gallery), .event__date,
+     .skip-link. Each used `background: var(--c-ink)` for *intentional
+     dark plate* — flipping the token turned them light on dark scheme.
+
+     The site is editorial-paper-toned by design; a one-way photo-led
+     light scheme is the canonical look. `color-scheme: light dark`
+     stays declared (above) so form controls + scrollbars still pick
+     a sane palette on dark-OS, but body surfaces don't auto-invert. */
 }
 
 /* ---------------------------------------------------------------------
@@ -579,7 +575,8 @@
   }
   /* Quiet hover: gold rim, no animation. Bawah-DNA — capsule earns
      attention by hairline contrast, not by spinning ornament. */
-  .lang-switch:hover {
+  .lang-switch:hover,
+  .lang-switch:focus-visible {
     background: color-mix(in srgb, var(--c-ink-deep) 42%, transparent);
     border-color: color-mix(in srgb, var(--c-gold) 70%, transparent);
     transform: translateY(-1px);
@@ -643,7 +640,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .lang-switch { transition: none; }
-    .lang-switch:hover { transform: none; }
+    .lang-switch:hover,
+    .lang-switch:focus-visible { transform: none; }
   }
 
   /* =========  NAV  ========= */
@@ -1604,7 +1602,8 @@
     border-inline-end: 1px solid var(--c-line-dark);
     border-block-end: 1px solid var(--c-line-dark);
   }
-  .infra__item:hover {
+  .infra__item:hover,
+  .infra__item:focus-visible {
     background: color-mix(in srgb, var(--c-gold) 6%, transparent);
   }
   /* Remove outer-edge seams so the outer wrapper border owns them. */
@@ -1891,7 +1890,8 @@
       background var(--dur-fast) var(--ease-smooth),
       transform var(--dur-base) var(--ease-smooth);
   }
-  .lightbox__close:hover {
+  .lightbox__close:hover,
+  .lightbox__close:focus-visible {
     background: color-mix(in srgb, black 50%, transparent);
     transform: rotate(90deg);
   }
@@ -1948,7 +1948,8 @@
     padding-block-end: 2px;
     transition: color var(--dur-fast) var(--ease-smooth);
   }
-  .ics-link:hover { color: var(--c-ink); }
+  .ics-link:hover,
+  .ics-link:focus-visible { color: var(--c-ink); }
 
   .events__list {
     display: grid;
@@ -1984,7 +1985,8 @@
       border-color var(--dur-base) var(--ease-smooth),
       box-shadow var(--dur-base) var(--ease-smooth);
   }
-  .event:hover {
+  .event:hover,
+  .event:focus-visible {
     transform: translateY(-2px);
     border-color: color-mix(in srgb, var(--c-gold) 40%, var(--c-line));
     box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--c-ink) 20%, transparent);
@@ -2049,7 +2051,8 @@
     padding-block-end: 2px;
     transition: color var(--dur-fast) var(--ease-smooth);
   }
-  .event__cta:hover { color: var(--c-ink); }
+  .event__cta:hover,
+  .event__cta:focus-visible { color: var(--c-ink); }
 
   .events__archive {
     margin-block-start: clamp(32px, 4vw, 56px);
@@ -2149,7 +2152,8 @@
     .email-card__row { padding-block-start: 12px; }
     .email-card__addr { font-size: 0.94rem; }
   }
-  .email-card:hover {
+  .email-card:hover,
+  .email-card:focus-visible {
     border-color: color-mix(in srgb, var(--c-gold) 40%, var(--c-line));
     transform: translateY(-1px);
   }
@@ -2178,7 +2182,8 @@
     border-block-end: 1px solid transparent;
     transition: border-color var(--dur-fast) var(--ease-smooth);
   }
-  .email-card__addr:hover { border-block-end-color: currentColor; }
+  .email-card__addr:hover,
+  .email-card__addr:focus-visible { border-block-end-color: currentColor; }
 
   .email-card__copy {
     display: inline-flex;
@@ -2195,7 +2200,8 @@
       border-color var(--dur-fast) var(--ease-smooth),
       background var(--dur-fast) var(--ease-smooth);
   }
-  .email-card__copy:hover {
+  .email-card__copy:hover,
+  .email-card__copy:focus-visible {
     color: var(--c-ink);
     border-color: var(--c-gold);
     background: color-mix(in srgb, var(--c-gold) 8%, transparent);
@@ -2258,7 +2264,8 @@
     padding-block-end: 4px;
     transition: border-color var(--dur-fast) var(--ease-smooth);
   }
-  .e404__link:hover { border-block-end-color: var(--c-ink); }
+  .e404__link:hover,
+  .e404__link:focus-visible { border-block-end-color: var(--c-ink); }
 }
 
 /* ---------------------------------------------------------------------
