@@ -114,6 +114,10 @@
    --------------------------------------------------------------------- */
 @layer tokens {
   :root {
+    /* WSE §17.1 — declare both schemes so the browser picks form
+       controls + scrollbar palette correctly without our overrides. */
+    color-scheme: light dark;
+
     /* ink — deep sunset water, slightly blue-shifted */
     --c-ink:        #0c1a22;
     --c-ink-soft:   #22343d;
@@ -207,6 +211,21 @@
       --c-rust:      color(display-p3 0.55 0.29 0.17);
     }
   }
+
+  /* WSE §17 — dark-mode palette. The hero is photo-driven (always
+     warm-paper + ink overlay regardless), so we only flip the
+     editorial body surfaces below the fold: vitals strip, footer,
+     contact cards, code/table/quote backgrounds. Everything else
+     reads from --c-ink/paper which already work on either scheme. */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --c-paper:      #11181d;
+      --c-paper-warm: #161e23;
+      --c-paper-cool: #0e1418;
+      --c-ink:        #ece5d3;
+      --c-ink-soft:   #b6b1a2;
+    }
+  }
 }
 
 /* ---------------------------------------------------------------------
@@ -286,6 +305,15 @@
   em { font-style: italic; }
 
   address { font-style: normal; }
+
+  /* WSE §9.5 — touch target ≥ 44 CSS px on every interactive control.
+     coarse pointer only: keeps mouse-driven UI dense, ensures fingers
+     never miss an action on phone or tablet. */
+  @media (pointer: coarse) {
+    button, a, input, select, textarea, summary, [role="button"] {
+      min-block-size: 44px;
+    }
+  }
 
   .mono {
     font-family: var(--ff-mono);
@@ -1980,6 +2008,11 @@
     .emails { grid-template-columns: 1fr; }
   }
   .email-card {
+    /* WSE §5 — container query target. Card adapts to whatever holds
+       it (sidebar, modal, dashboard cell, or its own grid cell)
+       independent of viewport width. */
+    container-type: inline-size;
+    container-name: email-card;
     padding: 22px 24px;
     background: color-mix(in srgb, var(--c-paper) 55%, var(--c-paper-warm));
     border: 1px solid var(--c-line);
@@ -1990,6 +2023,12 @@
     transition:
       border-color var(--dur-base) var(--ease-smooth),
       transform var(--dur-base) var(--ease-smooth);
+  }
+  /* If the card has wide enough inline-size, address row sits beside
+     the role/desc; otherwise it stacks below. Independent of @media. */
+  @container email-card (min-inline-size: 28rem) {
+    .email-card__row { padding-block-start: 12px; }
+    .email-card__addr { font-size: 0.94rem; }
   }
   .email-card:hover {
     border-color: color-mix(in srgb, var(--c-gold) 40%, var(--c-line));

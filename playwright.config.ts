@@ -37,6 +37,13 @@ export default defineConfig({
       },
     },
     { name: 'mobile', use: { ...devices['iPhone 13'] } },
+    {
+      // WSE §22 viewport sweep — runs the resize test on chromium only,
+      // dedicated config so smoke/visual tests stay on the original two.
+      name: 'viewport-sweep',
+      testMatch: /viewport\.spec\.ts$/,
+      use: { ...devices['Desktop Chrome'] },
+    },
   ],
   webServer: {
     command: 'python3 -m http.server 8787 --directory dist',
