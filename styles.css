@@ -452,6 +452,11 @@
     line-height: 1.7;
     color: var(--c-ink-soft);
   }
+  /* Centred-essay variant — body sits aligned to a centred head.
+     Container centred; paragraphs keep reading-flow start alignment. */
+  .essay--centered {
+    margin-inline: auto;
+  }
   .essay p + p { margin-block-start: 1.2em; }
   .essay b { color: var(--c-ink); font-weight: 500; }
   .essay em { color: var(--c-gold-deep); }
@@ -1936,6 +1941,8 @@
     grid-auto-rows: 1fr;
     gap: var(--sp-6);                        /* 24px, rhythm-aligned */
     margin-block-start: var(--sp-12);
+    max-inline-size: 1100px;
+    margin-inline: auto;
   }
   .events__empty {
     margin-block-start: var(--sp-m);
