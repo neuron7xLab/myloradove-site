@@ -662,6 +662,77 @@ def gate_domain_consistency() -> Finding:
     return Finding("I27", bad == 0, f"domain consistency ({canonical_host}): {bad} foreign refs [{detail}]")
 
 
+def gate_srcset_real_widths() -> Finding:
+    """Every <picture> srcset width descriptor must match the actual
+    pixel width of the file it points to. Catches the regression where
+    HTML is updated to advertise a width but the file isn't re-encoded
+    (browser then downscales a too-small image → blur, or downloads
+    extra bytes for an oversized one)."""
+    import struct
+    html = (DIST / "index.html").read_text(encoding="utf-8")
+    # Find every "images/<file> <N>w" descriptor inside srcset/imagesrcset
+    pattern = re.compile(r'(images/[\w.-]+\.(?:avif|webp))\s+(\d+)w')
+    mismatches: list[str] = []
+    checked = 0
+    for fname, declared in pattern.findall(html):
+        path = DIST / fname
+        if not path.exists():
+            continue
+        # AVIF/WebP magic-byte width extraction is non-trivial; rely on
+        # filename convention `<stem>-<width>.<ext>` we enforce in
+        # encode_image.py. Compare advertised vs filename-encoded width.
+        m = re.search(r'-(\d+)\.\w+$', fname)
+        if not m:
+            continue
+        real = int(m.group(1))
+        decl = int(declared)
+        checked += 1
+        if real != decl:
+            mismatches.append(f"{fname}: advertised {decl}w, filename {real}w")
+    return Finding(
+        "I30", not mismatches,
+        f"srcset width descriptors match filenames: {checked} checked, {len(mismatches)} mismatched"
+        + (f"; {mismatches[0]}" if mismatches else ""),
+    )
+
+
+def gate_image_aggregate_weight() -> Finding:
+    """Total weight of all dist/images/ must stay under a soft aggregate
+    cap so the repo doesn't accrete unused encoded variants over time.
+    Per-class I13 already caps individual files; this gate catches the
+    'encode 3 widths but only use 1' anti-pattern."""
+    img_dir = DIST / "images"
+    if not img_dir.is_dir():
+        return Finding("I31", True, "no images dir — skipping")
+    total = sum(p.stat().st_size for p in img_dir.iterdir() if p.is_file())
+    mb = total / 1024 / 1024
+    cap_mb = 20.0
+    return Finding(
+        "I31", mb <= cap_mb,
+        f"aggregate image weight: {mb:.1f} MB / cap {cap_mb} MB",
+    )
+
+
+def gate_lcp_size_cap() -> Finding:
+    """The LCP image (declared via <link rel='preload' as='image'> with
+    fetchpriority='high') must stay under 600 KB. Catches the case where
+    a new LCP photo is dropped in without a render-budget re-encode."""
+    html = (DIST / "index.html").read_text(encoding="utf-8")
+    m = re.search(r'<link[^>]*rel="preload"[^>]*as="image"[^>]*href="([^"]+)"', html)
+    if not m:
+        return Finding("I32", True, "no LCP preload declared — skipping")
+    href = m.group(1).lstrip("/")
+    path = DIST / href
+    if not path.exists():
+        return Finding("I32", False, f"LCP preload target missing: {href}")
+    kb = path.stat().st_size / 1024
+    cap_kb = 600
+    return Finding(
+        "I32", kb <= cap_kb,
+        f"LCP preload {href}: {kb:.0f} KB / cap {cap_kb} KB",
+    )
+
+
 def gate_build_determinism() -> Finding:
     """Re-run build.py and confirm every file in dist/ has identical bytes.
     Build determinism is a load-bearing invariant — non-deterministic
@@ -741,6 +812,9 @@ def main() -> int:
         findings.extend(gate_bilingual_shell())
         findings.extend(gate_locale_parity())
         findings.append(gate_domain_consistency())
+        findings.append(gate_srcset_real_widths())
+        findings.append(gate_image_aggregate_weight())
+        findings.append(gate_lcp_size_cap())
         # Determinism is the most expensive gate; runs last so failures
         # are easy to read even when the rebuild diff is large.
         findings.append(gate_build_determinism())

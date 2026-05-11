@@ -532,6 +532,9 @@ def render_cf_headers(css_name: str, ld_hashes: dict, preloaded_fonts: list[str]
           Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
           Cross-Origin-Opener-Policy: same-origin
           Cross-Origin-Resource-Policy: same-origin
+          Reporting-Endpoints: csp-endpoint="https://myloradove.com.ua/_report/csp", default="https://myloradove.com.ua/_report/default"
+          NEL: {{"report_to":"default","max_age":2592000,"include_subdomains":true}}
+          Report-To: {{"group":"default","max_age":2592000,"endpoints":[{{"url":"https://myloradove.com.ua/_report/default"}}],"include_subdomains":true}}
 
         /
           Cache-Control: public, max-age=0, must-revalidate

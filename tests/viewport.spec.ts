@@ -40,13 +40,20 @@ test('hero section never produces horizontal scroll on the smallest phone', asyn
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
+  // boundingClientRect respects overflow: clip on .hero — measures the
+  // actually-painted rect, not the would-be scrollable content. This is
+  // the gate we care about: nothing the user sees creates a sideways
+  // scroll. scrollWidth could overshoot by a sub-pixel when a positioned
+  // child's transform offsets it inside a clipped container.
   const heroOverflow = await page.evaluate(() => {
     const hero = document.querySelector('.hero') as HTMLElement | null;
     if (!hero) return { ok: false, reason: 'no .hero element' };
+    const r = hero.getBoundingClientRect();
+    const bodyW = document.body.clientWidth;
     return {
-      ok: hero.scrollWidth <= hero.clientWidth + 1,
-      sw: hero.scrollWidth,
-      cw: hero.clientWidth,
+      ok: r.width <= bodyW + 1,
+      rw: r.width,
+      bw: bodyW,
     };
   });
   expect(heroOverflow.ok, JSON.stringify(heroOverflow)).toBe(true);

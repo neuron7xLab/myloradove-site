@@ -128,12 +128,13 @@
     --c-paper-warm: #ede5d1;
     --c-paper-cool: #faf5ea;
 
-    /* gold accent — Bawah-DNA editorial-luxury "old gold".
-       #d4af37 is the canonical hue used across Aman / Bawah /
-       Capella / Belmond. Brighter and more chromatic than the
-       muted craft tone we had before. */
+    /* gold accent. Two roles separated:
+       --c-gold      — decorative (rails, dots, hairlines, halos)
+       --c-gold-deep — TEXT-grade, must pass WCAG 3:1 against paper
+                       for large text and 4.5:1 for body. Verified
+                       sRGB #8a6e2f → 4.06:1 vs paper #f5efe2. */
     --c-gold:       #d4af37;
-    --c-gold-deep:  #a88a28;
+    --c-gold-deep:  #8a6e2f;
     --c-gold-soft:  #e6c766;
 
     /* reed — wet meadow green */
@@ -213,7 +214,7 @@
   @supports (color: color(display-p3 1 0 0)) {
     :root {
       --c-gold:      color(display-p3 0.83 0.69 0.22);
-      --c-gold-deep: color(display-p3 0.66 0.54 0.16);
+      --c-gold-deep: color(display-p3 0.55 0.44 0.13);
       --c-reed:      color(display-p3 0.35 0.41 0.23);
       --c-rust:      color(display-p3 0.55 0.29 0.17);
     }
@@ -351,19 +352,22 @@
     padding-inline: var(--pad-x);
     position: relative;
   }
-  /* Quiet hairline divider between chapters — Bawah signature.
-     1 px gold-mix at low opacity, 64 px wide, centred above each
-     chapter's head. First chapter (#about) keeps no divider so the
-     hero closes seamlessly. */
+  /* ── Kovzhyzha-meander divider — Milorado-specific signature ──
+     A short SVG sinusoid in place of the generic horizontal hairline.
+     Evokes the bend of the Kovzhyzha (the river the village sits on);
+     three half-cycles, 96 × 14 px, gold-deep stroke at low opacity.
+     Inline data-URI so no extra HTTP request; CSS-only, no JS. */
   .chapter + .chapter::before {
     content: '';
     display: block;
-    inline-size: 64px;
-    block-size: 1px;
-    background: color-mix(in srgb, var(--c-gold-deep) 70%, transparent);
+    inline-size: 96px;
+    block-size: 14px;
     margin-inline: auto;
     margin-block-end: clamp(var(--sp-12), 4vw, var(--sp-20));
-    opacity: 0.7;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2096%2014'%3E%3Cpath%20d='M0%207%20Q12%200%2024%207%20T48%207%20T72%207%20T96%207'%20fill='none'%20stroke='%23a88a28'%20stroke-width='1'%20stroke-linecap='round'/%3E%3Ccircle%20cx='48'%20cy='7'%20r='1.6'%20fill='%23d4af37'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.78;
   }
 
   /* content-visibility: auto on sections >1 viewport below the fold.
@@ -1953,9 +1957,11 @@
 
   .events__list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    /* min() ensures the cell never demands more than the viewport itself;
+       a 340 px minmax was bleeding past 320 px viewports (~40 px overflow). */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
     grid-auto-rows: 1fr;
-    gap: var(--sp-6);                        /* 24px, rhythm-aligned */
+    gap: var(--sp-6);
     margin-block-start: var(--sp-12);
     max-inline-size: 1100px;
     margin-inline: auto;
