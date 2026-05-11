@@ -1,0 +1,28 @@
+# CODEOWNERS — review routing for the Milorado site
+#
+# Every PR that touches a path listed below requests a review from the
+# matching owner(s) automatically. The owners are GitHub handles, not
+# email addresses.
+
+# Default: anything not matched below
+*                       @neuron7xLab
+
+# Build + audit infrastructure — must not regress invariants
+/build.py               @neuron7xLab
+/audit.py               @neuron7xLab
+/scripts/               @neuron7xLab
+/.github/workflows/     @neuron7xLab
+
+# Content sources of truth — operators may also propose edits
+/data/                  @neuron7xLab
+/site.config.json       @neuron7xLab
+
+# Tests — any change here changes the safety net
+/tests/                 @neuron7xLab
+/playwright.config.ts   @neuron7xLab
+/lighthouserc*.json     @neuron7xLab
+
+# Documents that bind decisions
+/MAINTENANCE.md         @neuron7xLab
+/docs/adr/              @neuron7xLab
+/SECURITY.md            @neuron7xLab
