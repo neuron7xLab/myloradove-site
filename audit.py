@@ -69,10 +69,10 @@ BUDGETS = {
                                 # + lede + sources prose) takes the document
                                 # over the previous 42 KB cap. Gzips well below
                                 # 12 KB; HTTP/2 initial window unaffected.
-    "css_max":     80 * 1024,   # 2026 stack: scroll-/view-timeline + chapter-reveal
-                                #             + gradient-mesh + variable-axis title +
-                                #             3D card hover. Budget raised from 65 KB
-                                #             after measuring; still gzips to <14 KB.
+    "css_max":     85 * 1024,   # 2026 stack + Bawah-DNA + Kovzhyzha meander +
+                                # symmetric timeline + 4-col vitals + container-
+                                # query email card + WCAG focus-visible parity.
+                                # Gzips well under 16 KB; HTTP/2 init window OK.
     "js_max":      22 * 1024,   # 2026 stack: cursor-light + View Transitions
     "img_640":    300 * 1024,   # thumbnails / gallery previews
     "img_1280":   800 * 1024,   # article plate default
