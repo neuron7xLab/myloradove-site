@@ -17,6 +17,11 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Python venvs (encode_image.py scratch envs — never track)
+/.venv/
+/.venv-encode/
+/.venv-*/
+
 # Python
 __pycache__/
 *.pyc
