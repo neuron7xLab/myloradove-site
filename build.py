@@ -404,8 +404,13 @@ GB_FLAG_SVG = (
 
 def render_lang_switch(current: str, t: dict) -> str:
     """Badge in top-right. Shows the OTHER language's flag + 2-letter code;
-    clicking switches to that language's page. Inline SVG = no extra fetch."""
-    href = "/en/" if current == DEFAULT_LOCALE else "/"
+    clicking switches to that language's page. Inline SVG = no extra fetch.
+
+    href is RELATIVE so the same artefact serves correctly from both the
+    canonical root (`myloradove.com.ua/`) and any subpath deploy (e.g.
+    `*.github.io/myloradove-site/`). Absolute `/en/` would 404 on a
+    subpath host because the leading slash escapes the project root."""
+    href = "en/" if current == DEFAULT_LOCALE else "../"
     other_hreflang = "en" if current == DEFAULT_LOCALE else "uk"
     other_flag = GB_FLAG_SVG if current == DEFAULT_LOCALE else UK_FLAG_SVG
     code = t["lang_switch"]["other_code"]
@@ -694,16 +699,22 @@ def build(preview: bool = False) -> None:
         page = page.replace('href="styles.css"', f'href="{css_name}"')
         page = page.replace('src="script.js"', f'src="{js_name}"')
 
-        # For locales served from a sub-path (e.g. /en/) we rewrite every
-        # relative asset reference to root-relative. Anchor links (#foo)
-        # and external URLs are left alone — intra-page navigation stays
-        # inside /en/.
+        # For locales served from a sub-path (e.g. /en/) every relative
+        # asset reference must point one directory UP so it resolves to
+        # the shared dist/ root, not to dist/en/<asset>. Using `../foo`
+        # instead of `/foo` makes the same artefact serve correctly from
+        # both the canonical root (`myloradove.com.ua/en/...`) and any
+        # subpath host (`*.github.io/myloradove-site/en/...`) — `/foo`
+        # would escape the project root on the latter and 404.
+        # Skipped scheme prefixes: http/https, data:, mailto:, anchor
+        # fragments (#), already-absolute paths (/), and already-relative
+        # `.`/`..` references (the lang-switch back-link to `../`).
         if loc != DEFAULT_LOCALE:
+            SKIP = ("http", "data:", "#", "/", "mailto:", ".")
             def rootify(m: re.Match) -> str:
-                attr = m.group(1)      # src | href | srcset
+                attr = m.group(1)
                 quote = m.group(2)
                 value = m.group(3)
-                # srcset is comma-separated "url Xw, url Xw"
                 if attr == "srcset":
                     parts = []
                     for chunk in value.split(","):
@@ -713,14 +724,14 @@ def build(preview: bool = False) -> None:
                         toks = chunk.split(None, 1)
                         url = toks[0]
                         rest = f" {toks[1]}" if len(toks) > 1 else ""
-                        if not url.startswith(("http", "data:", "#", "/", "mailto:")):
-                            url = "/" + url
+                        if not url.startswith(SKIP):
+                            url = "../" + url
                         parts.append(url + rest)
                     new_val = ", ".join(parts)
                 else:
-                    if value.startswith(("http", "data:", "#", "/", "mailto:")):
+                    if value.startswith(SKIP):
                         return m.group(0)
-                    new_val = "/" + value
+                    new_val = "../" + value
                 return f'{attr}={quote}{new_val}{quote}'
             page = re.sub(
                 r'\b(src|href|srcset)=(["\'])([^"\']+)\2',

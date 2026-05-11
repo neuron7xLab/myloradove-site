@@ -71,11 +71,12 @@ test.describe('landing → reach out', () => {
 });
 
 test.describe('locale switch', () => {
-  test('UK → EN switch lands on /en/ with English-language meta', async ({ page }) => {
+  test('UK → EN switch lands on the EN shell with English meta', async ({ page }) => {
     await page.goto('/');
     const switchLink = page.locator('a.lang-switch');
     const href = await switchLink.getAttribute('href');
-    expect(href).toBe('/en/');
+    // Relative href works on both root-domain and subpath hosts.
+    expect(href).toBe('en/');
     await switchLink.click();
     await page.waitForURL('**/en/');
     const lang = await page.locator('html').getAttribute('lang');
@@ -88,7 +89,8 @@ test.describe('locale switch', () => {
     await page.goto('/en/');
     const back = page.locator('a.lang-switch');
     const href = await back.getAttribute('href');
-    expect(href).toBe('/');
+    // '../' from /en/ resolves to the root in both deploy contexts.
+    expect(href).toBe('../');
   });
 });
 

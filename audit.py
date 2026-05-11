@@ -539,15 +539,19 @@ def gate_bilingual_shell() -> list[Finding]:
     # 4. Lang switch present and points to the OTHER locale
     uk_sw = re.search(r'<a class="lang-switch"[^>]*href="([^"]+)"[^>]*hreflang="([^"]+)"', uk_html)
     en_sw = re.search(r'<a class="lang-switch"[^>]*href="([^"]+)"[^>]*hreflang="([^"]+)"', en_html)
+    # Lang-switch hrefs are relative ('en/' from uk, '../' from en) so the
+    # same artefact serves correctly from both the canonical root and any
+    # subpath host (e.g. *.github.io/<repo>/). Audit checks the expected
+    # relative form per locale.
     out.append(Finding(
         "I26d-uk",
-        bool(uk_sw and uk_sw.group(1) == "/en/" and uk_sw.group(2) == "en"),
-        f"uk page: switch → /en/ (hreflang=en): {bool(uk_sw)}",
+        bool(uk_sw and uk_sw.group(1) == "en/" and uk_sw.group(2) == "en"),
+        f"uk page: switch → en/ (hreflang=en): {bool(uk_sw) and uk_sw.group(1) if uk_sw else False}",
     ))
     out.append(Finding(
         "I26d-en",
-        bool(en_sw and en_sw.group(1) == "/" and en_sw.group(2) == "uk"),
-        f"en page: switch → / (hreflang=uk): {bool(en_sw)}",
+        bool(en_sw and en_sw.group(1) == "../" and en_sw.group(2) == "uk"),
+        f"en page: switch → ../ (hreflang=uk): {bool(en_sw) and en_sw.group(1) if en_sw else False}",
     ))
 
     # 5. Canonical differs per locale
@@ -560,8 +564,11 @@ def gate_bilingual_shell() -> list[Finding]:
         f"canonicals: uk={uk_canon.group(1) if uk_canon else '?'}, en={en_canon.group(1) if en_canon else '?'}",
     ))
 
-    # 6. EN page uses root-relative asset paths (so /en/ doesn't double up)
-    bad_rel = len(re.findall(r'(?:src|href)="(?!https?:|#|/|data:|mailto:)([^"]+)"', en_html))
+    # 6. EN page asset paths resolve correctly from /en/.  Both `../foo`
+    #    (subpath-safe, the new default) and `/foo` (root-absolute,
+    #    canonical-domain-only) work; bare `foo` (without prefix) would
+    #    double-up as `/en/foo` and 404.
+    bad_rel = len(re.findall(r'(?:src|href)="(?!https?:|#|/|\.\.?/|data:|mailto:)([^"]+)"', en_html))
     out.append(Finding("I26f", bad_rel == 0, f"EN page has no broken relative asset paths: {bad_rel == 0}"))
 
     return out
