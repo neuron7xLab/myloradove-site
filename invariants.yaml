@@ -1,0 +1,40 @@
+version: 1
+updated_utc: "2026-05-12T00:00:00Z"
+owner: "neuron7xLab/myloradove-site maintainers"
+problem_statement: "Deliver a deterministic, accessible, privacy-preserving civic website that can be safely operated without backend complexity."
+falsifiable_hypothesis:
+  claim: "If build and verification gates pass, the shipped artifact is production-safe within declared budgets and contracts."
+  falsified_when:
+    - "Any mandatory gate in audit.py fails."
+    - "Any required Playwright accessibility/smoke/viewport test fails."
+    - "Any documented contract key is missing between locales."
+success_criteria:
+  - "58/58 audit gates PASS on clean build"
+  - "Playwright suite PASS on CI matrix"
+  - "No broken internal/local asset references"
+completion_criteria:
+  - "All checks run and artifacts published with timestamp"
+non_goals_if_failed:
+  - "Reject feature-level optimization changes lacking invariant coverage"
+  - "Rollback to last green commit and freeze content edits"
+invariants:
+  - id: I01-I32
+    source: audit.py
+    description: "Fail-closed deterministic production gates"
+  - id: C01
+    source: tests/a11y.spec.ts
+    description: "A11y contract enforced via axe"
+  - id: C02
+    source: tests/smoke.spec.ts
+    description: "Core UX flows: drawer, lightbox, copy contacts"
+  - id: C03
+    source: tests/viewport.spec.ts
+    description: "Viewport resilience 320-1920"
+  - id: C04
+    source: tests/visual.spec.ts
+    description: "Visual regressions for hero/contact"
+emergency:
+  kill_switch:
+    action: "Serve maintenance mode (Cloudflare Pages rollback to previous deployment)"
+  rollback:
+    action: "Redeploy last known-good artifact and re-run audit.py"

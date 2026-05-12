@@ -40,6 +40,8 @@
       imagesrcset="images/img_4886-640.avif 640w, images/img_4886-1280.avif 1280w, images/img_4886-1440.avif 1440w, images/img_4886-1920.avif 1920w"
       imagesizes="100vw" fetchpriority="high">
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
 <link rel="stylesheet" href="styles.css">
 
 <script type="application/ld+json">
@@ -133,6 +135,11 @@
   <div class="hero__atmos" aria-hidden="true"></div>
   <div class="hero__cursor" aria-hidden="true"></div>
   <div class="hero__grain" aria-hidden="true"></div>
+
+  <div class="hero__overlay" aria-hidden="true">
+    <p class="hero__kicker">Локальний портал</p>
+    <p class="hero__intro">Панорами, мапа маршрутів, корисна інфраструктура громади.</p>
+  </div>
 
   <!-- Per design call: hero centre stays visually empty; the photo
        carries the page. h1 lives off-screen for a11y/SEO. Class
@@ -398,6 +405,27 @@
   </ul>
 </section>
 
+
+<section id="portal" class="chapter chapter--portal">
+  <header class="chapter__head chapter__head--center">
+    <p class="chapter__num">08A</p>
+    <h2 class="chapter__title">Локальний портал<br><em>мед · кафе · продукти</em></h2>
+  </header>
+  <div class="portal-grid" data-portal-grid aria-live="polite"></div>
+</section>
+
+<section id="map360" class="chapter chapter--map360">
+  <header class="chapter__head chapter__head--center">
+    <p class="chapter__num">08B</p>
+    <h2 class="chapter__title">Інтерактивна мапа та 360°<br><em>Милорадове · Лабурівка · околиці</em></h2>
+  </header>
+  <div class="geo-wrap">
+    <div id="village-map" class="geo-map" role="region" aria-label="Мапа маршрутів і локальних об'єктів"></div>
+    <div id="panorama-view" class="pano-view" role="region" aria-label="Панорама 360 градусів"></div>
+  </div>
+  <p class="geo-note">Street View відкривається у новому вікні з координат точки.</p>
+</section>
+
 <section id="events" class="chapter chapter--events">
   <header class="chapter__head chapter__head--center">
     <p class="chapter__num">{{t.events.chapter}}</p>
@@ -498,6 +526,8 @@
   <p class="lightbox__caption"></p>
 </dialog>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js" defer></script>
 <script src="script.js" defer></script>
 </body>
 </html>

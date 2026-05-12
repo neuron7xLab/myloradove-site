@@ -1,8 +1,3 @@
-/* =====================================================================
-   Милорадове · script.js
-   Zero dependencies. Each module isolated in safely(); one failure
-   never cascades. Operational events optionally reported via window._mv.
-   ===================================================================== */
 (() => {
   'use strict';
 
@@ -19,7 +14,7 @@
       console.error(`[myloradove:${name}]`, err);
     }
     if (typeof window._mv === 'function') {
-      try { window._mv(name, err); } catch (_) { /* never throw from hook */ }
+      try { window._mv(name, err); } catch (_) {  }
     }
   };
   const safely = (name, fn) => {
@@ -45,10 +40,56 @@
         }
       },
     };
-  })();
+  
+    safely('portal-data', () => {
+    const root = document.querySelector('[data-portal-grid]');
+    if (!root) return;
+    fetch('data/portal.json', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('portal.json missing')))
+      .then(data => {
+        const cats = Array.isArray(data.categories) ? data.categories : [];
+        const dir = Array.isArray(data.directory) ? data.directory : [];
+        root.innerHTML = cats.map(c => `
+          <article class="portal-card">
+            <h3><span aria-hidden="true">${c.icon || '▣'}</span> ${c.name || 'Секція'}</h3>
+            ${(c.items || []).map(i => `<p><strong>${i.title || ''}</strong><br>${i.price || ''}<br><em>${i.promo || ''}</em></p>`).join('')}
+          </article>`).join('') + `
+          <article class="portal-card portal-card--directory">
+            <h3>Корисна інформація</h3>
+            ${dir.map(d => `<p><strong>${d.title}</strong><br>${d.hours}<br><a href="tel:${d.phone}">${d.phone}</a></p>`).join('')}
+          </article>`;
+      })
+      .catch((e) => report('portal-data', e));
+  });
 
-  /* --- NAV: scrolled state + mobile drawer -------------------------- */
-  safely('nav', () => {
+    safely('geo-stack', () => {
+    const mapEl = document.getElementById('village-map');
+    const panoEl = document.getElementById('panorama-view');
+    if (!mapEl || !panoEl || !window.L) return;
+
+    const points = [
+      { name: 'Милорадове центр', lat: 49.5374, lng: 34.7102 },
+      { name: 'Лабурівка', lat: 49.5215, lng: 34.7351 },
+      { name: 'Околиці ставу', lat: 49.5459, lng: 34.6954 }
+    ];
+
+    const map = L.map(mapEl, { scrollWheelZoom: false }).setView([49.5374, 34.7102], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+    L.polyline(points.map(p => [p.lat, p.lng]), { color: '#d4af37', weight: 4, opacity: 0.8 }).addTo(map);
+
+    points.forEach((p) => {
+      const url = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lng}`;
+      L.marker([p.lat, p.lng]).addTo(map).bindPopup(`<strong>${p.name}</strong><br><a href="${url}" target="_blank" rel="noopener">Street View</a>`);
+    });
+
+    if (window.pannellum) {
+      window.pannellum.viewer('panorama-view', { type: 'equirectangular', panorama: 'images/img_9210-1920.webp', autoLoad: true, showControls: true, hfov: 100 });
+    }
+  });
+
+})();
+
+    safely('nav', () => {
     const nav = $('#nav');
     if (!nav) return;
 
@@ -107,8 +148,7 @@
     }
   });
 
-  /* --- READING PROGRESS: rAF-throttled, writes one CSS var ---------- */
-  safely('progress', () => {
+    safely('progress', () => {
     const bar = $('.progress');
     if (!bar) return;
     let rafPending = false;
@@ -130,8 +170,7 @@
     window.addEventListener('resize', tick, { passive: true });
   });
 
-  /* --- ACTIVE SECTION: aria-current on the live link ---------------- */
-  safely('active-section', () => {
+    safely('active-section', () => {
     const links = $$('.nav__menu a[href^="#"]');
     if (!links.length) return;
 
@@ -181,8 +220,7 @@
     window.addEventListener('scroll', closestOnBottom, { passive: true });
   });
 
-  /* --- SMOOTH ANCHOR SCROLL with header offset ---------------------- */
-  safely('anchor-offset', () => {
+    safely('anchor-offset', () => {
     const nav = $('#nav');
     const headerH = () => (nav ? nav.getBoundingClientRect().height : 0);
     const behavior = rmotion() ? 'auto' : 'smooth';
@@ -201,8 +239,7 @@
     });
   });
 
-  /* --- REVEAL: fade-up on enter ------------------------------------- */
-  safely('reveal', () => {
+    safely('reveal', () => {
     const targets = $$([
       '.chapter__head',
       '.essay',
@@ -231,8 +268,7 @@
     targets.forEach(el => io.observe(el));
   });
 
-  /* --- LIGHTBOX: AVIF-first, focus restore, inert main -------------- */
-  safely('lightbox', () => {
+    safely('lightbox', () => {
     const lb = $('#lightbox');
     if (!lb) return;
     const img    = $('img', lb);
@@ -325,13 +361,7 @@
     lb.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
   });
 
-  /* --- HERO FILTER GATE: pause SVG displacement when off-screen ------
-     The feTurbulence + feDisplacementMap chain runs at 60 fps while the
-     <animate> ticks. When the hero scrolls out of view the filter still
-     re-rasterises behind the scenes unless we explicitly pause SMIL and
-     hide the filtered layer. Saves a substantial GPU budget on every
-     section below the fold. */
-  safely('hero-filter-gate', () => {
+    safely('hero-filter-gate', () => {
     const hero = document.getElementById('top');
     const water = $('.hero__water');
     const filters = $('.hero__filters');
@@ -350,7 +380,7 @@
         } else if (next && typeof filters.unpauseAnimations === 'function') {
           filters.unpauseAnimations();
         }
-      } catch (_) { /* ignore — SMIL not supported on this browser */ }
+      } catch (_) {  }
     };
 
     const io = new IntersectionObserver((entries) => {
@@ -359,8 +389,7 @@
     io.observe(hero);
   });
 
-  /* --- COPY EMAIL: clipboard for contact cards ---------------------- */
-  safely('copy-email', () => {
+    safely('copy-email', () => {
     const buttons = $$('.email-card__copy[data-copy]');
     if (!buttons.length) return;
     const status = $('[data-copy-status]');
@@ -407,7 +436,7 @@
           try {
             await navigator.clipboard.writeText(text);
             ok = true;
-          } catch (_) { /* fall through */ }
+          } catch (_) {  }
         }
         if (!ok) ok = fallbackCopy(text);
         if (ok) markCopied(btn);
@@ -416,16 +445,12 @@
     });
   });
 
-  /* --- Year stamp --------------------------------------------------- */
-  safely('year', () => {
+    safely('year', () => {
     const el = $('#year');
     if (el) el.textContent = String(new Date().getFullYear());
   });
 
-  /* --- Cursor-tracking ambient light on hero ------------------------
-     Publishes pointer position as CSS variables on .hero. Pointer-only
-     (no touch jitter), throttled to one rAF frame. */
-  safely('cursor-light', () => {
+    safely('cursor-light', () => {
     const hero = $('.hero');
     if (!hero) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -448,10 +473,7 @@
     });
   });
 
-  /* --- Sticky chapter indicator (IntersectionObserver) --------------
-     Watches each <section.chapter> and updates a floating pill with
-     the active chapter's number + title. Hidden over the hero. */
-  safely('chapter-indicator', () => {
+    safely('chapter-indicator', () => {
     const ind = document.querySelector('[data-chapter-indicator]');
     if (!ind || !('IntersectionObserver' in window)) return;
     const numEl   = ind.querySelector('.chapter-indicator__num');
@@ -497,9 +519,6 @@
     }
   });
 
-/* --- View Transitions for in-page anchor jumps --------------------
-     Native View Transitions API. Wraps same-document scroll in a
-     startViewTransition so navigation crossfades. Falls back silently. */
   safely('view-transitions', () => {
     if (!document.startViewTransition) return;
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -517,4 +536,53 @@
       });
     });
   });
+
+    safely('portal-data', () => {
+    const root = document.querySelector('[data-portal-grid]');
+    if (!root) return;
+    fetch('data/portal.json', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('portal.json missing')))
+      .then(data => {
+        const cats = Array.isArray(data.categories) ? data.categories : [];
+        const dir = Array.isArray(data.directory) ? data.directory : [];
+        root.innerHTML = cats.map(c => `
+          <article class="portal-card">
+            <h3><span aria-hidden="true">${c.icon || '▣'}</span> ${c.name || 'Секція'}</h3>
+            ${(c.items || []).map(i => `<p><strong>${i.title || ''}</strong><br>${i.price || ''}<br><em>${i.promo || ''}</em></p>`).join('')}
+          </article>`).join('') + `
+          <article class="portal-card portal-card--directory">
+            <h3>Корисна інформація</h3>
+            ${dir.map(d => `<p><strong>${d.title}</strong><br>${d.hours}<br><a href="tel:${d.phone}">${d.phone}</a></p>`).join('')}
+          </article>`;
+      })
+      .catch((e) => report('portal-data', e));
+  });
+
+    safely('geo-stack', () => {
+    const mapEl = document.getElementById('village-map');
+    const panoEl = document.getElementById('panorama-view');
+    if (!mapEl || !panoEl || !window.L) return;
+
+    const points = [
+      { name: 'Милорадове центр', lat: 49.5374, lng: 34.7102 },
+      { name: 'Лабурівка', lat: 49.5215, lng: 34.7351 },
+      { name: 'Околиці ставу', lat: 49.5459, lng: 34.6954 }
+    ];
+
+    const map = L.map(mapEl, { scrollWheelZoom: false }).setView([49.5374, 34.7102], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap contributors' }).addTo(map);
+    L.polyline(points.map(p => [p.lat, p.lng]), { color: '#d4af37', weight: 4, opacity: 0.8 }).addTo(map);
+
+    points.forEach((p) => {
+      const url = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lng}`;
+      L.marker([p.lat, p.lng]).addTo(map).bindPopup(`<strong>${p.name}</strong><br><a href="${url}" target="_blank" rel="noopener">Street View</a>`);
+    });
+
+    if (window.pannellum) {
+      window.pannellum.viewer('panorama-view', { type: 'equirectangular', panorama: 'images/img_9210-1920.webp', autoLoad: true, showControls: true, hfov: 100 });
+    }
+  });
+
 })();
+
+  
