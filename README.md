@@ -29,6 +29,15 @@ python3 -m http.server 8787 --directory dist           # http://127.0.0.1:8787/
 
 Heavier toolchain (Playwright + Lighthouse) optional and CI-only.
 
+
+## Engineering contract (2026)
+
+- **Problem (one sentence):** deliver a deterministic, accessible, privacy-preserving civic site that can be safely operated with static hosting only.
+- **Falsifiable hypothesis:** if `build.py` and all mandatory verification gates pass, deployment is production-safe within declared contracts and budgets; if any mandatory gate fails, the claim is false.
+- **Success criteria:** 58/58 `audit.py` gates pass + CI checks pass.
+- **Completion criteria:** checks are executed and evidence is recorded.
+- **If it fails, we discard:** unverified optimizations/features that are not covered by invariant checks and roll back to last green deployment.
+
 ## The 58 invariants
 
 `audit.py` enforces, in seven families:
